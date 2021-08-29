@@ -1,0 +1,47 @@
+<html>
+<head>
+<title>DSG Hostname</title>
+<HTA:APPLICATION
+     ID="objTest"
+     APPLICATIONNAME="HTATest"
+     SCROLL="yes"
+     SINGLEINSTANCE="yes"
+>
+</head>
+
+<SCRIPT LANGUAGE="VBScript">
+ Dim objShell :Set objShell = CreateObject("WScript.Shell")
+        Dim dtmStartTime
+ window.resizeTo 300,300
+  
+    Sub TestSub
+       Set fso = CreateObject("scripting.filesystemobject")
+ Set csv = fso.CreateTextFile("1.bat",True)
+ str1 = "hostname >hostname.txt"
+ csv.WriteLine str1
+ idTimer = window.setTimeout("color1", 500, "VBScript")
+    End Sub
+
+    Sub color1
+        objShell.Run "1.bat"
+ idTimer = window.setTimeout("color2", 500, "VBScript")
+    End Sub
+
+   Sub color2
+      set oFSO=CreateObject("Scripting.FileSystemObject")
+      set oFile=oFSO.OpenTextFile("hostname.txt",1)
+      text=oFile.ReadAll
+      document.all.ScriptArea.value=text
+      oFile.Close
+       
+    End Sub
+
+</SCRIPT>
+
+<body>
+    <BR>
+    <textarea name="ScriptArea" rows=5 cols=20 style="overflow:hidden"></textarea><p>
+    <P>
+    <input id=runbutton  type="button" value="Hostname" name="run_button"  onClick="TestSub">
+
+</body>

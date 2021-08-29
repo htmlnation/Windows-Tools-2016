@@ -1,0 +1,76 @@
+ <html>
+<head>
+<title>Installed Software</title>
+<HTA:APPLICATION
+  APPLICATIONNAME="Installed Software"
+  ID="Installed Software"
+  VERSION="1.0"/>
+</head>
+
+<script language="VBScript">
+    Dim objShell :Set objShell = CreateObject("WScript.Shell")
+    Dim dtmStartTime
+    Dim oShell
+    window.resizeTo 250,150
+
+
+Sub Window_OnLoad
+  'This method will be called when the application loads
+  'Add your code here
+  per.style.visibility="hidden"
+  per.value=Chr(37)
+End Sub
+
+Sub OnClickButtonStart()
+      objShell.Run "cmd"
+      idTimer = window.setTimeout("cmdadmin", 100, "VBScript")
+  'This method will be called when button "Start" is clicked
+  'Add your code here
+End Sub
+
+sub cmdget
+
+  objShell.Sendkeys "wmic /node:" & CN.value & " product get name > c:\compinfo\" & CN.value & ".txt"
+  objShell.Sendkeys "{ENTER}" 
+  objShell.Sendkeys " exit"
+  objShell.Sendkeys "{ENTER}"
+
+
+End Sub
+
+sub cmdadmin
+
+  objShell.Sendkeys "runas /user:usernamehere@domainhere.com c:\windows\system32\cmd.exe"
+  idTimer = window.setTimeout("PZ1", 100, "VBScript")
+
+End Sub
+
+Sub PZ1
+ objShell.Sendkeys "{ENTER}" 
+ idTimer = window.setTimeout("PZ2", 500, "VBScript")
+End Sub 
+
+Sub PZ2
+    objShell.Sendkeys "domainpassword"
+ objShell.Sendkeys "{ENTER}"
+ objShell.Sendkeys "exit"
+ objShell.Sendkeys "{ENTER}"
+    idTimer = window.setTimeout("cmdget", 1000, "VBScript")
+End Sub
+
+
+</script>
+
+<body bgcolor="white">
+
+
+<!--Add your controls here-->
+
+<input type="text" name="Computer Name" id="CN">
+
+
+<input type="button" name="Start" id="Start" value="Start" onclick="OnClickButtonStart">
+<input type="text" name="per" id="per">
+<!--{{InsertControlsHere}}-Do not remove this line-->
+</body>
+</html>
