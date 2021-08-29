@@ -1,0 +1,37 @@
+<head>
+<title>Test</title>
+<script language="VBScript">
+
+Dim objFSO, objFolder, objShell, objTextFile, objFile
+Dim strDirectory, strFile, strText
+strDirectory = "C:\Users\Owner\Desktop\Projects"
+strFile = "\Project.txt"
+Set objFSO = CreateObject("Scripting.FileSystemObject")
+    If objFSO.FolderExists(strDirectory) Then
+        Set objFolder = objFSO.GetFolder(strDirectory)
+    Else
+        Set objFolder = objFSO.CreateFolder(strDirectory)
+        WScript.Echo "Just created " & strDirectory
+    End If
+
+    If objFSO.FileExists(strDirectory & strFile) Then
+        Set objFolder = objFSO.GetFolder(strDirectory)
+    Else
+        Set objFile = objFSO.CreateTextFile(strDirectory & strFile)
+    End If 
+
+    set objFile = nothing
+    set objFolder = nothing
+    Const ForAppending = 8
+    Set objTextFile = objFSO.OpenTextFile _
+    (strDirectory & strFile, ForAppending, True)
+
+    Sub CheckKey
+     If window.event.keyCode = 112 Then
+        objTextFile.WriteLine(Time & " - " & Date & ": ") & ("F1")
+     End If
+    End Sub
+</script>
+<body onKeyUp="CheckKey">
+</body>
+</head>
