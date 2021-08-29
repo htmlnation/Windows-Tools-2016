@@ -1,0 +1,109 @@
+<HTA:APPLICATION 
+     Icon = ext/6ec.ico	
+     SCROLL="no"
+     SINGLEINSTANCE="yes"
+     WINDOWSTATE="normal"
+>
+<title>ChAt</title>
+</head>
+
+<SCRIPT Language="VBScript">
+
+Sub Window_OnLoad
+ Window.ResizeTo 400,500
+   iTimerID = window.setInterval("Display", 100)
+End Sub
+
+    strPath = "C:\chat\"
+    Set wshShell = CreateObject( "WScript.Shell" )
+    strSender = wshShell.ExpandEnvironmentStrings( "%USERNAME%" )
+    strTime =  Right("0" & Hour(Now), 2) & ":" & Right("0" & Minute(Now), 2)	
+
+Sub Display
+    Set objFSO = CreateObject("Scripting.FileSystemObject")
+
+Set objFile = objFSO.OpenTextFile(StrPath & "Chat.txt", 1)
+
+Do Until objFile.AtEndOfStream
+    strCharacters = objFile.ReadAll
+Loop
+
+ objFile.Close
+
+
+     DisplayBox.Value = strCharacters
+
+        DisplayBox.ScrollTop = DisplayBox.ScrollHeight
+
+
+ ' This splits each line.
+' sArray = Split(DisplayBox.Value, vbcrlf)
+
+End Sub
+
+Sub InputBox
+
+With document.parentWindow.event
+ If .keycode = 13 then
+    Const NORMAL_WINDOW = 1
+
+    Const ForAppending = 8
+
+    Set objFSO = CreateObject("Scripting.FileSystemObject")
+     Set objTextFile = objFSO.OpenTextFile(StrPath & "Chat.txt", ForAppending, True)
+      objTextFile.WriteLine  strTime &"-" & strSender  & ":" & Input.Value
+       objTextFile.Close
+
+
+    Input.Value = ""
+Set WshShell = CreateObject("WScript.Shell")
+WshShell.SendKeys "{BACKSPACE}"
+
+
+Else
+   .cancelbubble = false
+     .returnvalue = true
+ End If
+
+End With
+
+End Sub
+
+Sub TestSub
+
+        Set FSO = CreateObject("Scripting.FileSystemObject")
+        Set csv = fso.CreateTextFile(StrPath & "Chat.txt",True)
+        
+End Sub
+
+Sub TestSub2
+Const NORMAL_WINDOW = 1
+
+    Const ForAppending = 8
+
+    Set objFSO = CreateObject("Scripting.FileSystemObject")
+     Set objTextFile = objFSO.OpenTextFile(StrPath & "Chat.txt", ForAppending, True)
+      objTextFile.Close
+
+
+    Input.Value = ""
+Set WshShell = CreateObject("WScript.Shell")
+WshShell.SendKeys "{BACKSPACE}"
+
+End Sub
+
+</SCRIPT>
+<body>
+<body background="ext/MG.jpg"> 
+<textarea name="DisplayBox" rows="6" cols="40"></textarea>
+<BR>
+<BR>
+<BR>
+<textarea name="Input" rows="3" onKeydown=InputBox cols="40"></textarea>
+<BR>
+<!--<input id=runbutton1  class="button" type="button" value="Refresh chat" name="run_button"  onClick="TestSub2">-->
+<BR>
+<BR>
+<input id=runbutton  class="button" type="button" value="Clear Chat" name="run_button"  onClick="TestSub">
+</body>
+</html>
