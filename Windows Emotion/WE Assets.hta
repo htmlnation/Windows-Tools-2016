@@ -1,0 +1,45 @@
+<html>
+<head>
+<title>Key</title>
+
+<HTA:APPLICATION
+  APPLICATIONNAME="Secure"
+  ID="Secure"
+  SINGLEINSTANCE="yes"
+  scroll="no"
+  VERSION="1.0"/>
+  
+</head>
+
+
+<script language="VBScript" type="text/vbscript">
+   window.resizeTo 250,250
+   Dim count1 
+   Dim oShell
+   Dim objShell :Set objShell = CreateObject("WScript.Shell")
+   count1 = 0 
+   count2 = 0 
+   count3 = 0 
+    
+Sub Window_OnLoad
+idTimer = window.setTimeout("left", 1200, "VBScript")
+End Sub
+
+Sub Left
+idTimer = window.setTimeout("right", 1200, "VBScript")
+window.document.body.background = "1.jpg"
+End sub
+
+Sub Right
+idTimer = window.setTimeout("left", 1200, "VBScript")
+window.document.body.background = "2.jpg"
+End sub
+
+</script>
+
+
+<!--Add your controls here-->
+
+<!--{{InsertControlsHere}}-Do not remove this line-->
+</body>
+</html>

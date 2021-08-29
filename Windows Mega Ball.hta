@@ -1,0 +1,295 @@
+ <html>
+<head>
+<title>MEGA MILLIONS</title>
+<HTA:APPLICATION
+  APPLICATIONNAME="MEGA MILLIONS"
+  ID="MEGA MILLIONS"
+  VERSION="1.0"
+  BORDER="thin"
+  BORDERSTYLE="sunken"
+  MAXIMIZEBUTTON="no"
+  SCROLL="no"
+  SCROLLFLAT="yes"/>
+</head>
+
+<script language="VBScript">
+
+Dim dtmStartTime
+intHighNumber = 75
+intLowNumber = 1
+window.resizeTo 240,210
+intnumber1 = 0
+intnumber2 = 0
+intnumber3 = 0
+intnumber4 = 0
+intnumber5 = 0
+intnumber6 = 0
+
+
+Sub Window_OnLoad
+  'This method will be called when the application loads
+  'Add your code here
+  a.value=intnumber1
+  b.value=intnumber2
+  c.value=intnumber3
+  d.value=intnumber4
+  e.value=intnumber5
+  f.value=intnumber6
+ 
+End Sub
+
+'a
+
+Sub OnClickButtonGo()
+ 
+  For G = 1 to 75
+    Randomize
+    intNumber1 = Int((intHighNumber - intLowNumber + 1) * Rnd + intLowNumber)
+ Next
+
+a.value=intnumber1
+
+'b
+
+For G = 1 to 75
+    Randomize
+    intNumber2 = Int((intHighNumber - intLowNumber + 1) * Rnd + intLowNumber)
+ Next
+ 
+ If intnumber1=intnumber2 Then
+ 
+ For G = 1 to 75
+    Randomize
+    intNumber2 = Int((intHighNumber - intLowNumber + 1) * Rnd + intLowNumber)
+ Next
+
+ End If
+ 
+b.value=intnumber2
+
+'c
+
+For G = 1 to 75
+    Randomize
+    intNumber3 = Int((intHighNumber - intLowNumber + 1) * Rnd + intLowNumber)
+ Next
+ 
+ If intnumber3=intnumber1 Then
+ 
+ For G = 1 to 75
+    Randomize
+    intNumber3 = Int((intHighNumber - intLowNumber + 1) * Rnd + intLowNumber)
+ Next
+
+ ElseIf intnumber3=intnumber2 Then
+ 
+ For G = 1 to 75
+    Randomize
+    intNumber3 = Int((intHighNumber - intLowNumber + 1) * Rnd + intLowNumber)
+ Next
+ 
+ End If
+ 
+c.value=intnumber3
+
+'d
+
+For G = 1 to 75
+    Randomize
+    intNumber4 = Int((intHighNumber - intLowNumber + 1) * Rnd + intLowNumber)
+ Next
+ 
+ If intnumber4=intnumber1 Then
+ 
+ For G = 1 to 75
+    Randomize
+    intNumber4 = Int((intHighNumber - intLowNumber + 1) * Rnd + intLowNumber)
+ Next
+
+ ElseIf intnumber4=intnumber2 Then
+ 
+ For G = 1 to 75
+    Randomize
+    intNumber4 = Int((intHighNumber - intLowNumber + 1) * Rnd + intLowNumber)
+ Next
+ 
+ ElseIf intnumber4=intnumber3 Then
+ 
+ For G = 1 to 75
+    Randomize
+    intNumber4 = Int((intHighNumber - intLowNumber + 1) * Rnd + intLowNumber)
+ Next
+ 
+ End If
+ 
+ d.value=intnumber4
+
+'e
+
+For G = 1 to 75
+    Randomize
+    intNumber5 = Int((intHighNumber - intLowNumber + 1) * Rnd + intLowNumber)
+ Next
+ 
+ If intnumber5=intnumber1 Then
+ 
+ For G = 1 to 75
+    Randomize
+    intNumber5 = Int((intHighNumber - intLowNumber + 1) * Rnd + intLowNumber)
+ Next
+
+ ElseIf intnumber5=intnumber2 Then
+ 
+ For G = 1 to 75
+    Randomize
+    intNumber5 = Int((intHighNumber - intLowNumber + 1) * Rnd + intLowNumber)
+ Next
+ 
+ ElseIf intnumber5=intnumber3 Then
+ 
+ For G = 1 to 75
+    Randomize
+    intNumber5 = Int((intHighNumber - intLowNumber + 1) * Rnd + intLowNumber)
+ Next
+ 
+ ElseIf intnumber5=intnumber4 Then
+ 
+ For G = 1 to 75
+    Randomize
+    intNumber5 = Int((intHighNumber - intLowNumber + 1) * Rnd + intLowNumber)
+ Next
+ 
+ End If
+ 
+ e.value=intnumber5
+ 
+ 'f
+ 
+  For G = 1 to 75
+    Randomize
+    intNumber6 = Int((intHighNumber - intLowNumber + 1) * Rnd + intLowNumber)
+ Next
+
+f.value=intnumber6
+
+
+   
+End Sub
+
+
+
+
+
+</script>
+
+<body bgcolor="white">
+<!--Add your controls here-->
+
+<table>
+    <tr>
+        <td>
+         Balls
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>  
+       
+       
+        <td>
+        Mega Ball
+        </td>
+    </tr>
+</table>
+<table>      
+     <tr>
+        <td>
+         <textarea name="a" id="a" rows="1" cols="2" style="overflow:hidden"></textarea>
+        </td>
+        <td>
+         <textarea name="b" id="b" rows="1" cols="2" style="overflow:hidden"></textarea>
+        </td>
+        <td>
+          <textarea name="c" id="c" rows="1" cols="2" style="overflow:hidden"></textarea>
+        </td>
+        <td>
+          <textarea name="d" id="d" rows="1" cols="2" style="overflow:hidden"></textarea>
+        </td>
+        <td>
+          <textarea name="e" id="e" rows="1" cols="2" style="overflow:hidden"></textarea>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+         <textarea name="f" id="f" rows="1" cols="2" style="overflow:hidden"></textarea>
+        </td>
+    </tr>
+</Table>
+
+<br>
+<input type="button" name="Go" id="Go" value="Get Winning Numbers" onclick="OnClickButtonGo">
+<br>
+
+
+<!--{{InsertControlsHere}}-Do not remove this line-->
+</body>
+</html>

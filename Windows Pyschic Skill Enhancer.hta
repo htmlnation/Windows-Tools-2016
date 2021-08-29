@@ -1,0 +1,261 @@
+<html>
+<head>
+<title>Key</title>
+
+<HTA:APPLICATION
+  APPLICATIONNAME="Secure"
+  ID="Secure"
+  SINGLEINSTANCE="yes"
+  scroll="no"
+  VERSION="1.0"/>
+ 
+</head>
+
+
+<script language="VBScript" type="text/vbscript">
+   window.resizeTo 210,100
+   Dim count
+   count = 0
+   
+Sub Window_OnLoad
+End Sub
+
+Sub OnClickButtonGO()
+ count = count + 1
+
+If count < 10 then
+  If password.value = "1wdvefr12345" then
+   MsgBox "yes"
+   me.close
+   Else
+   MsgBox count
+  End if
+ Else
+me.close
+End If
+
+  <html>
+<head>
+<title>Exercise your psychic abilities</title>
+<HTA:APPLICATION
+  APPLICATIONNAME="exercise your psychic abilities"
+  ID="exercise your psychic abilities"
+  VERSION="2.3"
+  BORDER="thin"
+  BORDERSTYLE="sunken"
+  MAXIMIZEBUTTON="no"
+  SCROLL="no"
+  SCROLLFLAT="yes"/>
+</head>
+
+<script language="VBScript">
+Dim dtmStartTime
+intHighNumber = 5
+intLowNumber = 1
+window.resizeTo 600,500
+intnumber2 = 0
+intnumber3 = 0
+
+Sub Window_OnLoad
+  'This method will be called when the application loads
+  'Add your code here
+ 
+ wins.value=intnumber2
+ Lost.value=intnumber3
+ 
+End Sub
+
+Sub OnClickButtonGo()
+ For Each i In myradio1
+   If i.checked Then
+  End If
+ Next
+ 
+  For a = 1 to 5
+    Randomize
+    intNumber = Int((intHighNumber - intLowNumber + 1) * Rnd + intLowNumber)
+   
+Next
+
+  document.getElementByID("6").style.display = "none"
+  document.getElementByID("6").style.display = "none"
+ 
+ Select Case intNumber
+  Case 1
+   
+    document.getElementByID("1a").style.display = "inline"
+    idTimer = window.setTimeout("refimg", 200, "VBScript")
+  
+    For Each i In myradio1
+     If i.checked Then
+      If i.value = "1" then
+        MsgBox "Correct!"
+        intnumber2 = intnumber2 + 1
+        wins.value=intnumber2
+      Else
+         MsgBox "You selected the wrong card."
+         intnumber3 = intnumber3 + 1
+         Lost.value=intnumber3
+      End if 
+     End If
+    Next 
+   
+   Case 2
+  
+   document.getElementByID("2a").style.display = "inline"
+   idTimer = window.setTimeout("refimg", 200, "VBScript")
+ 
+   For Each i In myradio1
+     If i.checked Then
+      If i.value = "2" then
+        MsgBox "Correct!"
+        intnumber2 = intnumber2 + 1
+        wins.value=intnumber2
+      Else
+         MsgBox "You selected the wrong card."
+         intnumber3 = intnumber3 + 1
+         Lost.value=intnumber3
+      End if 
+     End If
+    Next 
+  
+  Case 3
+ 
+   document.getElementByID("3a").style.display = "inline"
+   idTimer = window.setTimeout("refimg", 200, "VBScript")
+ 
+   For Each i In myradio1
+     If i.checked Then
+      If i.value = "3" then
+        MsgBox "Correct!"
+        intnumber2 = intnumber2 + 1
+        wins.value=intnumber2
+      Else
+         MsgBox "You selected the wrong card."
+         intnumber3 = intnumber3 + 1
+         Lost.value=intnumber3
+      End if 
+     End If
+    Next 
+  
+  Case 4
+  
+   document.getElementByID("4a").style.display = "inline"
+   idTimer = window.setTimeout("refimg", 200, "VBScript")
+ 
+   For Each i In myradio1
+     If i.checked Then
+      If i.value = "4" then
+        MsgBox "Correct!"
+        intnumber2 = intnumber2 + 1
+        wins.value=intnumber2
+      Else
+         MsgBox "You selected the wrong card."
+         intnumber3 = intnumber3 + 1
+         Lost.value=intnumber3
+      End if 
+     End If
+    Next 
+  
+  Case 5
+ 
+   document.getElementByID("5a").style.display = "inline"
+   idTimer = window.setTimeout("refimg", 200, "VBScript")
+ 
+   For Each i In myradio1
+     If i.checked Then
+      If i.value = "5" then
+        MsgBox "Correct!"
+        intnumber2 = intnumber2 + 1
+        wins.value=intnumber2
+      Else
+         MsgBox "You selected the wrong card."
+         intnumber3 = intnumber3 + 1
+         Lost.value=intnumber3
+      End if 
+     End If
+    Next 
+  
+ End select
+End Sub
+
+Sub refimg
+ document.getElementByID("1a").style.display = "none"
+ document.getElementByID("2a").style.display = "none"
+ document.getElementByID("3a").style.display = "none"
+ document.getElementByID("4a").style.display = "none"
+ document.getElementByID("5a").style.display = "none"
+ document.getElementByID("6").style.display = "inline"
+
+End sub
+
+</script>
+<!--Add your controls here-->
+
+<table>
+     <tr>
+        <td>
+          <body bgcolor="white">Right
+          <textarea name="Wins" id="Wins" rows="1" cols="5" style="overflow:hidden"></textarea>
+        </td>
+        <td>
+          <body bgcolor="white">Wrong
+          <textarea name="Lost" id="Lost" rows="1" cols="5" style="overflow:hidden"></textarea>
+        </td>
+    </tr>
+</Table>
+       
+    
+<br>
+<br>
+<input type="button" name="Go" id="Go" value="Reveal" onclick="OnClickButtonGo">
+<br>
+<br>
+<table>
+     <tr>
+        <td>
+    <center><img ID="1" src="c:\temp\cards\shapes\1.jpg" name="img1" value="1"><BR><input type="radio" name="myradio1" id="r1" value="1"></center>
+        </td>
+        <td>  
+          <center><img ID="2" src="c:\temp\cards\shapes\2.jpg" name="img1" value="2"><BR><input type="radio" name="myradio1" id="r1" value="2"></center>
+        </td>
+        <td>  
+          <center><img ID="3" src="c:\temp\cards\shapes\3.jpg" name="img1" value="3"><BR><input type="radio" name="myradio1" id="r1" value="3"></center>
+          </td>
+        <td>  
+          <center><img ID="4" src="c:\temp\cards\shapes\4.jpg" name="img1" value="4"><BR><input type="radio" name="myradio1" id="r1" value="4"></center>
+        </td>
+        <td>  
+          <center><img ID="5" src="c:\temp\cards\shapes\5.jpg" name="img1" value="5"><BR><input type="radio" name="myradio1" id="r1" value="5"></center>
+        </td>    
+     </tr>
+</Table>
+<BR>
+<BR>
+<table>
+    <tr>
+      <td>
+      <img ID="1a" src="c:\temp\cards\shapes\1.jpg" name="img1" value="1" style="display: none;" />
+      <img ID="2a" src="c:\temp\cards\shapes\2.jpg" name="img1" value="2" style="display: none;" />
+      <img ID="3a" src="c:\temp\cards\shapes\3.jpg" name="img1" value="3" style="display: none;" />
+      <img ID="4a" src="c:\temp\cards\shapes\4.jpg" name="img1" value="4" style="display: none;" />
+      <img ID="5a" src="c:\temp\cards\shapes\5.jpg" name="img1" value="5" style="display: none;" />
+      <img ID="6" src="c:\temp\cards\shapes\6.jpg" name="img1" value="6">
+      </td>
+    </tr>
+</table>     
+
+<!--{{InsertControlsHere}}-Do not remove this line-->
+</body>
+</html>
+End Sub
+</script>
+
+
+<!--Add your controls here-->
+
+<input type="button" name="GO" id="GO" value="§" onclick="OnClickButtonGO">
+<input type="password" name="Password" id="Password">
+<!--{{InsertControlsHere}}-Do not remove this line-->
+</body>
+</html>

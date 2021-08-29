@@ -1,0 +1,311 @@
+<html>
+<head>
+<title>JB Quick Load</title>
+<HTA:APPLICATION
+     Icon = ext/6ec.ico 
+     ID="objTest"
+     APPLICATIONNAME="sinstall"
+     SCROLL="yes"
+     SINGLEINSTANCE="yes"
+>
+</head>
+
+<SCRIPT LANGUAGE="VBScript">
+ Dim objShell :Set objShell = CreateObject("WScript.Shell")
+    Dim dtmStartTime
+        Dim oShell
+        window.resizeTo 400,700
+    
+
+ 
+   Sub TestSub
+         Select Case RadioOption.Value
+      Case 1
+     objShell.Run "cmd.exe"
+     idTimer = window.setTimeout("Admincomp", 500, "VBScript") 
+     Case 2
+         End Select     
+   End Sub
+
+Sub RDC
+       Select Case OptionChooser.Value
+<!-- Severs -->
+              Case 1
+      objShell.Run "mstsc C:\qL\A\A02.rdp"
+           Case 2
+           objShell.Run "mstsc C:\qL\A\JR.RDP"
+             Case 3
+       objShell.Run "mstsc c:\qL\AV\AS01.RDP"
+      Case 4
+      objShell.Run "mstsc C:\qL\AV\AV01.RDP"
+      Case 5
+                    objShell.Run "mstsc C:\qL\D\A01.rdp" 
+      Case 6
+                    objShell.Run "mstsc C:\qL\D\A1.RDP"  
+      Case 7
+                    objShell.Run "mstsc C:\qL\D\P2.rdp" 
+                    Case 8
+                    objShell.Run "mstsc C:\qL\H\A1.rdp"
+                    Case 9 
+                    objShell.Run "mstsc C:\qL\H\A1.rdp"
+                    Case 10
+                    objShell.Run "mstsc C:\qL\HK\A1.rdp"
+                    Case 11
+                    objShell.Run "mstsc C:\qL\HK\A01.rdp"
+                    Case 12
+                    objShell.Run "mstsc C:\qL\ML\A01.rdp"
+                    Case 13
+                    objShell.Run "mstsc C:\qL\ML\A01.RDP"
+                    Case 14
+                    objShell.Run "mstsc C:\qL\MPLS\A05.rdp"
+                    Case 15
+                    objShell.Run "mstsc C:\qL\MPLS\A10.rdp"
+                    Case 16
+                    objShell.Run "mstsc C:\qL\MPLS\A01.rdp"
+                    Case 17
+                    objShell.Run "mstsc C:\qL\MS\ZS.rdp"
+                    Case 18
+                    objShell.Run "mstsc C:\qL\Oe\AUC02.rdp"
+                    Case 19
+                    objShell.Run "mstsc C:\qL\Rt\AUC01.RDP"
+                    Case 20
+                    objShell.Run "mstsc C:\qL\Rt\KSO.RDP"
+                    Case 21
+                    objShell.Run "mstsc C:\qL\T\XCH01.rdp"
+                    Case 22
+                    objShell.Run "mstsc C:\qL\VIT\E2.RDP"
+ End Select 
+
+   End Sub
+
+  Sub weblinks
+
+   Select Case Optionlinks.Value
+    
+     <!-- weblinks -->
+              Case 1
+                     Set IE = CreateObject("InternetExplorer.Application")  
+       IE.navigate2 "http://www.google.com"
+                     IE.Visible = True
+    End Select
+  End sub
+
+   Sub tools
+
+     Select Case Optiontools.Value
+    
+       <!-- tools -->
+              Case 1
+                     objShell.Run "cmd.exe"
+       idTimer = window.setTimeout("AdminMSC", 500, "VBScript")
+      Case 2
+      objShell.Run "cmd.exe"
+      idTimer = window.setTimeout("Adminmsccmd", 500, "VBScript")
+      Case 3
+             objShell.Run "info.hta"
+      Case 4
+      objShell.Run "C:\qL\shortcuts\6.lnk" 
+      Case 5
+      objShell.Run "C:\qL\shortcuts\r.lnk"
+      Case 6
+      objShell.Run "C:\qL\shortcuts\e.lnk"
+             Case 7
+      objShell.Run "VNCInstall.hta"
+      End Select
+    End sub
+
+    Sub cmd
+    objShell.Sendkeys "runas /user:domain\Admin c:\windows\system32\cmd.exe"
+    idTimer = window.setTimeout("PZ1", 100, "VBScript")
+    End Sub
+
+    Sub Adminmsccmd
+      objShell.Sendkeys "runas /user:domain\Admin c:\windows\system32\cmd.exe"
+      idTimer = window.setTimeout("PZ1admin", 500, "VBScript")
+    End Sub
+
+    Sub AdminMSC
+      objShell.Sendkeys "runas /user:domain\Admin ""mmc c:\qL\C1.msc"""
+      idTimer = window.setTimeout("PZ1admin", 500, "VBScript")
+    End Sub
+ 
+    Sub Admincomp
+      objShell.Sendkeys "net use \\"
+      objShell.Sendkeys BasicTextbox.Value
+      objShell.Sendkeys "\c$ password /user:domain\Admin"
+      objShell.Sendkeys "{ENTER}"
+      idTimer = window.setTimeout("Admincomp2", 500, "VBScript") 
+    End Sub
+    
+   Sub Admincomp2
+      objShell.Sendkeys "start \\"
+      objShell.Sendkeys BasicTextbox.Value
+      objShell.Sendkeys "\c$" 
+      objShell.Sendkeys "{ENTER}" 
+      objShell.Sendkeys "exit"
+      objShell.Sendkeys "{ENTER}"
+    End Sub
+
+    Sub Adminmscstart
+      objShell.Sendkeys "mmc c:\qL\C1.msc"
+      objShell.Sendkeys "{ENTER}"
+      objShell.Sendkeys "exit"
+      objShell.Sendkeys "{ENTER}"
+    End Sub
+
+    
+    Sub PZ1
+ objShell.Sendkeys "{ENTER}" 
+ idTimer = window.setTimeout("PZ2", 500, "VBScript")
+    End Sub
+  
+   
+    Sub PZ1admin
+ objShell.Sendkeys "{ENTER}" 
+ idTimer = window.setTimeout("PZ2admin", 500, "VBScript")
+    End Sub
+
+    Sub PZ2
+        objShell.Sendkeys "password"
+ objShell.Sendkeys "{ENTER}"
+ objShell.Sendkeys "exit"
+ objShell.Sendkeys "{ENTER}"
+    End Sub 
+
+    Sub PZ2admin
+        objShell.Sendkeys "password"
+ objShell.Sendkeys "{ENTER}"
+ objShell.Sendkeys "exit"
+ objShell.Sendkeys "{ENTER}"
+ <!--   idTimer = window.setTimeout("adminmscstart", 500, "VBScript")
+ -->
+    End Sub
+
+    Sub ieopen
+        For Each objButton in RadioOption
+            If objButton.Checked Then
+               Select Case objButton.Value
+              Case 8
+                     objShell.Sendkeys "start https://admin.securence.com/" 
+                     objShell.Sendkeys "{ENTER}" 
+                     objShell.Sendkeys "exit"
+                     objShell.Sendkeys "{ENTER}"
+             Case 9
+                     objShell.Sendkeys "start https://www.ups.com/" 
+                     objShell.Sendkeys "{ENTER}" 
+                     objShell.Sendkeys "exit"
+                     objShell.Sendkeys "{ENTER}"          
+      Case 10
+                     objShell.Sendkeys "start https://google.com" 
+                     objShell.Sendkeys "{ENTER}" 
+                     objShell.Sendkeys "exit"
+                     objShell.Sendkeys "{ENTER}" 
+      Case 11
+                     objShell.Sendkeys "start https://google.com"
+                     objShell.Sendkeys "{ENTER}" 
+                     objShell.Sendkeys "exit"
+                     objShell.Sendkeys "{ENTER}" 
+       End Select     
+            End If
+        Next
+
+      
+    end Sub  
+
+      
+</SCRIPT>
+
+<body>
+<font color="white" "Times New Roman" size="3">
+<body background="ext/MG.jpg">
+<!-- <img src="\\dsgad3\Shared\IT\dsg.jpg" align="center"> -->
+<BR>
+<BR>
+Select your Destination <BR><br>
+    <BR>
+    Remote Desktop Connections
+    <BR>
+    <select size="1" name="OptionChooser" onChange="RDC">
+    <option value="0">---As---</option>
+    <option value="1"> A02 </option>
+    <option value="2"> JR </option>
+    <option value="0"></option>
+    <option value="0">---AV---</option>
+    <option value="3"> A01 </option>
+    <option value="4"> AV01 </option>
+    <option value="0"></option>
+    <option value="0">---Dl---</option>
+    <option value="5">A01</option>
+    <option value="6">AV01</option>
+    <option value="7">PA2</option>
+    <option value="0"></option>
+    <option value="0">---HT---</option>
+    <option value="8">A01</option>
+    <option value="9">AU01</option>
+    <option value="0"></option>
+    <option value="0">---HK---</option>
+    <option value="10">A01</option>
+    <option value="11">A1</option>
+    <option value="0"></option>
+    <option value="0">---ML---</option>
+    <option value="12">A01</option>
+    <option value="13">A1</option>
+    <option value="0"></option>
+    <option value="0">---MS---</option>
+    <option value="14">AH05</option>
+    <option value="15">A10</option>
+    <option value="16">A01</option>
+    <option value="17">ZS</option>
+    <option value="0"></option>
+    <option value="0">---OpenCircle---</option>
+    <option value="18">A02</option>
+    <option value="0"></option>
+    <option value="0">---Rt---</option>
+    <option value="19">A01</option>
+    <option value="20">KO</option>
+    <option value="0"></option>
+    <option value="0">---VT---</option>
+    <option value="21">A01</option>
+    <option value="22">E2</option>
+    <option value="0"></option>
+    </select>
+
+    <BR>
+    <BR>
+    Internet Links
+    <br>
+    <select size="1" name="Optionlinks" onChange="weblinks">
+    <option value="0">---Search---</option>
+    <option value="1">Google</option>
+    </select>
+
+<!-- <input type="radio" name="RadioOption" value="8">Securence<BR>
+    <input type="radio" name="RadioOption" value="9">UPS<BR>
+    <input type="radio" name="RadioOption" value="10">LogMeIn<BR> 
+    <input type="radio" name="RadioOption" value="11">PRTG Network Monitor DSGAD2<br> -->
+
+    <br>
+    <br>
+    Tools
+    <br>
+    <select size="1" name="Optiontools" onChange="tools">
+    <option value="0">---Quick Load---</option>
+    <option value="1">Admin MSC</option>
+    <option value="2">Admin CMD</option>
+    <option value="3">Info Prog</option>
+    <option value="4">Alloy</option>
+    <option value="5">Bomgar Remote</option> 
+    <option value="6">Google Chrome</option> 
+    <option value="7">VNC add/remove</option> 
+    </select>
+    <br>
+<!--    <input type="radio" name="RadioOption" value="12">cmd as Domain Admin<BR> 
+    <input type="radio" name="RadioOption" value="13">AdminMSC<BR> -->
+
+    <input type="radio" name="RadioOption" value="1">c$ as Admin<BR>
+    IP or Hostname <input type="text" name="BasicTextbox" size="30"><p>
+    <input id=runbutton  class="button" type="button" value="Run Selected" name="run_button"  onClick="TestSub">
+<br>
+   
+</font>
+</body>

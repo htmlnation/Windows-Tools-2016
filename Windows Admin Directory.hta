@@ -1,0 +1,126 @@
+<html>
+<head>
+<title>QL </title>
+<HTA:APPLICATION
+  APPLICATIONNAME="QL "
+  ID="QL"
+  VERSION="1.0"/>
+</head>
+
+<script language="VBScript">
+ Dim objShell :Set objShell = CreateObject("WScript.Shell")
+    Dim dtmStartTime
+    Dim oShell
+    window.resizeTo 325,300
+    
+
+Sub Window_OnLoad
+ userbox.value = userinput
+  'This method will be called when the application loads
+  'Add your code here
+End Sub
+
+'Radio crap dont touch
+Function GetOptionsRadioValue()
+  For i=0 to Options.length-1
+    If Options.Item(i).Checked Then
+      GetOptionsRadioValue = Options.Item(i).Value
+      Exit Function
+    End If
+  Next
+  GetOptionsRadioValue = ""
+End Function
+
+Sub tools
+     
+End Sub
+
+Sub OnClickButtongo()
+    
+'Option Selection
+  Select Case Optiontools.Value
+    Case 1
+    MsgBox "one"
+    Case 2
+    idTimer = window.setTimeout("AD", 100, "VBScript")
+    
+  End Select
+  'This method will be called when button "go" is clicked
+  'Add your code here
+End Sub
+
+'Username Sub
+Sub AD
+ If username.checked Then
+  idTimer = window.setTimeout("ADpassword", 100, "VBScript")
+ Else
+  MsgBox "Put in username then check box"
+ End If 
+End Sub
+
+'Password Sub
+Sub ADpassword
+ If pass.checked Then
+  'MsgBox "hi" & " " & userbox.value & " " & passbox.value
+  objShell.Run "cmd.exe"
+  idTimer = window.setTimeout("AdminMSC", 500, "VBScript")
+ Else
+  MsgBox "put in password"
+ End If 
+End Sub 
+
+'Admin AD MSC Part 1 of 3
+Sub AdminMSC
+      objShell.Sendkeys "runas /user:ad\" & userbox.value & " " & """mmc c:\AD\AD.msc"""
+      idTimer = window.setTimeout("PZ1admin", 500, "VBScript")
+End Sub
+
+'Admin AD MSC Pard 2 of 3
+
+Sub PZ1admin
+ objShell.Sendkeys "{ENTER}" 
+ idTimer = window.setTimeout("PZ2admin", 500, "VBScript")
+    End Sub
+    
+'Admin AD MSC Pard 2 of 3
+    
+    Sub PZ2admin
+    objShell.Sendkeys passbox.value 
+ objShell.Sendkeys "{ENTER}"
+ objShell.Sendkeys "exit"
+ objShell.Sendkeys "{ENTER}"
+    End Sub
+    
+    
+
+</script>
+
+<body bgcolor="white">
+
+<!--Add your controls here-->
+Options :
+<br>
+<select size="1" name="Optiontools" onChange="tools">
+    <option value="0">---Quick Load---</option>
+    <option value="1">Test</option>
+    <option value="2">Admin AD</option>
+</select>    
+<br>
+<br>
+<input type="checkbox" name="username" id="username"> UserName :
+
+<input type="text" name="userbox" id="userbox">
+
+<br>
+
+<input type="checkbox" name="pass" id="pass"> Password :
+
+<input type="password" name="passbox" id="passbox">
+
+</select>
+<br><br><center>
+<input type="button" name="go" id="go" value="GO!" onclick="OnClickButtongo">
+</Center>
+<!--{{InsertControlsHere}}-Do not remove this line-->
+</body>
+</html>

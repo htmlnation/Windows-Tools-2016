@@ -1,0 +1,82 @@
+ <html>
+<head>
+<title>ToolBox JB</title>
+<HTA:APPLICATION
+     ID="objTest"
+     APPLICATIONNAME="sinstall"
+     SCROLL="yes"
+     SINGLEINSTANCE="yes"
+>
+</head>
+
+<SCRIPT LANGUAGE="VBScript">
+ Dim objShell :Set objShell = CreateObject("WScript.Shell")
+    Dim dtmStartTime
+        Dim oShell
+        window.resizeTo 400,700
+    Set IE = CreateObject("InternetExplorer.Application")
+
+ 
+  Sub TestSub
+        For Each objButton in RadioOption
+            If objButton.Checked Then
+               Select Case objButton.Value
+              Case 1
+      objShell.Run "mstsc /v:dsgmail01"
+           Case 2
+           objShell.Run "mstsc /v:dsgapps02"
+             Case 3
+       objShell.Run "mstsc /v:dsgad3"
+      Case 4
+      objShell.Run "mstsc /v:Dsgweb2"
+      Case 5
+      objShell.Run "mstsc /v:dsgrds01"
+                    Case 6
+      objShell.Run "mstsc /v:dsgrds02" 
+                    Case 7
+             objShell.Run "mstsc /v:dsgrds03" 
+                    Case 8
+             IE.navigate2 "https://admin.securence.com/"
+                    IE.Visible = True
+             Case 9
+      IE.navigate2 "https://www.ups.com/one-to-one/login?returnto=https%3a//www.ups.com/one-to-one/loginSettings%3floc%3den_US%26WT.svl%3dPNRO_L1&reasonCode=-1"
+                    IE.Visible = True 
+      Case 10
+                    IE.navigate2 "https://accounts.logme.in/login.aspx?clusterid=04&returnurl=https%3A%2F%2Fsecure.logmein.com%2Ffederated%2Floginsso.aspx&headerframe=https%3A%2F%2Fsecure.logmein.com%2Ffederated%2Fresources%2Fheaderframe.aspx&productframe=https%3A%2F%2Fsecure.logmein.com%2Fcommon%2Fpages%2Fcls%2Flogin.aspx&lang=en-US&skin=logmein&regtype=R&trackingproducttype=2&trackinguniqueid=92b4efb2-e2ba-4c64-ad4e-abb435749354"
+                    IE.Visible = True 
+      Case 11
+             IE.navigate2 "https://dsgad2/public/login.htm?errormsg=Your%20login%20has%20failed.%20Please%20try%20again%21&loginurl="
+                    IE.Visible = True
+  End Select     
+            End If
+        Next
+    End Sub
+
+   
+</SCRIPT>
+
+<body>
+<img src="\\dsgad3\Shared\IT\logo.jpg" align="center">
+<BR>
+<BR>
+Select your Destination <BR><br>
+    <BR>
+    Remote Desktop Connections
+    <BR>
+    <input type="radio" name="RadioOption" value="1">RDC Mail Server<BR>
+    <input type="radio" name="RadioOption" value="2">RDC AV & Fortis<BR>
+    <input type="radio" name="RadioOption" value="3">RDC File Server<BR>
+    <input type="radio" name="RadioOption" value="4">RDC WatchGuard<BR>
+    <input type="radio" name="RadioOption" value="5">RDC dsgrds01<BR>
+    <input type="radio" name="RadioOption" value="6">RDC dsgrds02<BR>
+    <input type="radio" name="RadioOption" value="7">RDC dsgrds03<BR>
+    <br>
+    Internet Links
+    <br>
+    <input type="radio" name="RadioOption" value="8">Securence<BR>
+    <input type="radio" name="RadioOption" value="9">UPS<P>
+    <input type="radio" name="RadioOption" value="10">LogMeIn<P> 
+    <input type="radio" name="RadioOption" value="11">PRTG Network Monitor DSGAD2<P>
+    <input id=runbutton  class="button" type="button" value="Run Selected" name="run_button"  onClick="TestSub">
+
+</body>

@@ -1,0 +1,206 @@
+<HTML>
+<HEAD>
+<TITLE>Original SINe By Alan Bond</TITLE>
+
+<HTA:application id="frmMain" applicationname="Original SINe" singleinstance="yes" 
+showintaskbar="yes" contextmenu="no" border="thin" maximizebutton ="no" minimizebutton ="no"/>
+
+<STYLE type="text/css"><!--
+.styBox{font-family:Arial,Helvetica,sans-serif;font-size:10px;
+background-color:#A0A0A0;border-top:thin solid #D0D0D0;border-left:thin solid #D0D0D0;	
+border-right:thin solid #505050;border-bottom:thin solid #505050;Width:100;}
+--></STYLE>
+</HEAD>
+
+<SCRIPT language="VBScript">
+
+Option Explicit
+
+Dim SinTab(255)   'Sine table
+Dim Ct(14)        'Text boxes
+Dim intMain       'Interval mainloop
+Dim MiddleX       'Middle of the viewport
+Dim MiddleY       '
+Dim Sprite()      'Sprites (used to be GIFs, now they're DIVs)
+Dim SpriteOSX()   'Sprite X+Y offset in the sine table
+Dim SpriteOSY()   '
+Dim SpriteOS()    'Sprite depth offset
+Dim AM            'Sprite total
+Dim SpeedX        'Sprite speed X 
+Dim SpeedY        'Sprite speed Y
+Dim Depth         'Depth (evaluated)
+Dim SprSize       'Sprite size (eval)
+Dim SprR          'Sprite Red (eval)
+Dim SprG          'Sprite Green (eval)
+Dim SprB          'Sprite Blue (eval)
+Dim Lp            'Sprite ID (for eval)
+Dim PX            'Sprite postion (good for colour eval)
+Dim PY            '
+
+'---- Control labels
+Dim cName:cName = Array("Sprite Count","Delay","Start X Offset","Start Y Offset","Spacing X Offset", _
+"Spacing Y Offset","Speed X","Speed Y","Start Depth (Eval)","Depth Add (Eval)","Size (Eval)", _
+"Red (Eval)","Green (Eval)","Blue (Eval)","Wingding")
+
+'---- Favorites
+Dim Favs:Favs = Array("Simple circle",32,1,0,64,8,8,1,1,1,0,32,0,255,0,"l", _
+"Shell",64,1,0,64,8,8,1,1,"LP/128",0,128,"200","200-LP",0,"l", _
+"Hand wave",32,1,1,44,1,64,-1,0,"LP/32",0,128,"50+LP*5",66,125,"l", _
+"Angry cat",32,1,0,64,8,1,-6,0,"LP/60",0,80,"50+LP*6","LP*4",0,"l", _
+"Clock",22,1,0,64,0,0,-1,1,"LP/20",0,64,255,255,255,"l", _
+"Fish",32,1,32,32,3,123,1,0,1,0,80,"LP*10","50+LP*10",0,"v", _
+"Universe",50,1,0,64,6,6,1,1,"rnd(1)*1.5",0,"6+(rnd(1)*18)","PY","PY","PX","¬", _
+"Sea creature",32,1,0,64,62,128,2,1,"LP/39",0,80,"LP","LP*10","LP+100","£", _
+"JSW rope swing",50,1,0,64,1,0,-1,0,"LP/50",0,1,255,255,255,"l", _
+"Mellow",32,1,33,98,12,13,1,1,"LP*.030",0,"LP*2","PY",100,"PX","[", _
+"Offset",40,1,4,4,64,64,1,1,"LP*0.035",0,100,"LP*4","40-LP","100-LP","p", _
+"Weird",64,1,0,1,123,122,1,1,"LP/66",0,32,"LP*2","LP*3","223-LP*4","]", _
+"Crazy comet",28,1,66,209,2,1,3,2,1,0,"LP*5",255,"LP*8","LP*6","l", _
+"Game over!",30,1,66,12,2,123,2,1,"LP*0.02",0,"LP*7","LP*8","LP*8","LP*8","NNN", _
+"Head shot",60,1,0,64,8,8,0,0,"rnd(1)*0.07","rnd(1)*0.07","rnd(1)*22",255,0,0,"l", _
+"Red Arrows",32,1,23,32,3,1,1,1,"LP*0.03",0,"LP*3","255+LP*6","LP*6","LP*6","llllll", _
+"Black hole",60,1,0,64,8,8,3,3,"rnd(1)*2",-0.007,"rnd(1)*13",255,255,255,"¬", _
+"Illusion",32,1,0,64,8,8,2,1,"1","-0.01","70","(LP mod 5)*40","(LP mod 5)*40","(LP mod 5)*40","l", _
+"Alive",32,1,33,12,2,3,1,4,"1","-(LP*0.0001)",64,"PY/2",100,"PY","u", _
+"Feelers",32,1,0,1,127,128,2,1,"LP/36","","100-LP*2",0,"30+LP*3",0,"l", _
+"Tricky",32,1,0,64,132,133,1,1,0.3,0,122,122,"LP*5","LP*10","i")
+
+
+'---- Start up	
+Sub Window_OnLoad
+	Dim S,L,OPT
+	
+	'---- Size window
+	Self.ResizeTo 800,600
+	Self.MoveTo (Screen.Width/2)-400,(Screen.Height/2)-300
+	
+	'---- Make a sine table
+	For S=0 To 2 * 3.1415 Step 2 * 3.145/256:SinTab(L)=Int(Sin(S)*256):L=L+1:Next
+	
+	'---- Build controls
+	S="<INPUT TYPE='button' VALUE='Favorites' ONCLICK='ShowFav()' CLASS='stybox'><BR><BR>" 
+	For L=0 to 14
+		S=S & cName(L) & "<BR><INPUT TYPE='text' CLASS='stybox' ID='I" & L & _
+		"' MAXLENGTH='32' STYLE='background-color:#F0F0F0;' ONKEYPRESS='Ent()'><BR>"
+	Next
+	ctrls.innerHTML=S
+	For L=0 to 14
+		Set Ct(L)=document.getElementById("I" & L)
+	next
+	
+	'---- Make favorites
+	For L = 0 to UBound(Favs) step 16
+	        Set OPT = Document.createElement("OPTION")
+	        OPT.Text = Favs(L)
+	        FavList.Add(OPT)
+	Next
+	
+	'---- Load 1st favorite
+	LoadFav(0)
+	
+End Sub
+
+'---- Make sprites from sidebar's settings
+Sub MakeSprites()
+	On error resume next
+	Dim L,S
+	
+	'---- Stop the mainloop
+	Window.ClearInterval(intMain)
+
+	'---- Some sidebar variables that are exposed to the Evals()
+	AM=ct(0).value:SpeedX=ct(6).value:SpeedY=ct(7).value:Depth=ct(9).value
+	SprSize=ct(10).value:SprR=ct(11).value:SprG=ct(12).value:SprB=ct(13).value
+	
+	'---- Set sprite amount
+	Redim Sprite(AM):Redim SpriteOSX(AM):Redim SpriteOSY(AM):Redim SpriteOS(AM)
+
+	'---- Build sprites
+	For L=1 to AM
+		S=S & "<DIV id='hp" & L & "' style='position:absolute;color:black;" & _
+		"font-family:wingdings;'>" & ct(14).value & "</DIV>"
+	Next	
+	Viewport.innerHTML = S
+	For L=0 to AM
+		Set Sprite(L)=document.getElementById("hp" & L)
+	Next
+
+	'---- Position sprites
+	For LP = 1 to AM
+		SpriteOSX(LP)=(ct(2).value+(LP*ct(4).value)) and 255
+		SpriteOSY(LP)=(ct(3).value+(LP*ct(5).value)) and 255
+		SpriteOS(LP)=Eval(ct(8).value)
+	
+		MiddleX=(370-eval(SprSize)/2)
+		MiddleY=(280-eval(SprSize)/2)
+		
+		'---- Size sprites here (too slow for mainloop)
+		Sprite(Lp).style.FontSize=Eval(SprSize)
+	Next
+
+	'---- Start the interval for the mainloop
+	intMain = window.setInterval ("MainLoop", ct(1).value)	
+End sub
+
+'---- Main loop
+Sub Mainloop()
+	On Error Resume Next
+	For Lp = 1 to AM
+		'--- Add depth 
+		SpriteOS(Lp)=SpriteOS(Lp)+Eval(Depth) 
+		
+		'--- Get position in sine table, and screen
+		PX=MiddleX+SinTab(SpriteOSX(Lp))*SpriteOS(Lp)   
+		PY=MiddleY+SinTab(SpriteOSY(Lp))*SpriteOS(Lp)
+		
+		'--- Add speed
+		SpriteOSX(Lp)=SpriteOSX(Lp)+SpeedX and 255
+		SpriteOSY(Lp)=SpriteOSY(Lp)+SpeedY and 255
+			
+		'--- Set sprite's position
+		Sprite(Lp).Style.PixelLeft=PX     
+		Sprite(Lp).Style.PixelTop=PY
+		
+		'---- Colour eval
+		Sprite(Lp).style.color=RGB(eval(SprB),eval(SprG),eval(SprR))
+	Next
+End Sub
+
+'---- Show or hide favorites
+Sub ShowFav()
+	If FavList.style.display="none" then
+		FavList.style.display="block"	
+	Else
+		FavList.style.display="none"
+	End if
+End Sub
+
+'---- Click a favorite
+Sub SelFav()
+	LoadFav(FavList.selectedIndex)
+End Sub
+
+'---- Load a favorite
+Sub LoadFav(F)
+	Dim L
+	For L = 1 to 15
+		ct(L-1).value = Favs((F*16)+L)
+	Next 
+	MakeSprites()
+End Sub
+
+'---- Press enter in a text box
+Sub Ent()
+	If window.event.Keycode=13 then MakeSprites()
+End Sub
+
+
+</SCRIPT>
+<BODY scroll="no" STYLE="margin:0;background.color:black;">
+<DIV ID="ctrls" CLASS="stybox" STYLE="height:570;padding:3;"></DIV>
+<SELECT SIZE="32" ID="FavList" CLASS="stybox" ONCLICK="SelFav" 
+STYLE="display:none;position:absolute;width:102;height:538;left:3;Top:30"></SELECT>
+<DIV STYLE="position:absolute;width:690;height:572;top:0;Left:110;background-color:black;"
+ID="Viewport"></DIV>
+</BODY>
+</HTML>

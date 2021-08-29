@@ -1,0 +1,49 @@
+<html>
+<head>
+<title>image</title>
+<HTA:APPLICATION
+ ID="objTest"
+     APPLICATIONNAME="sinstall"
+     SCROLL="NO"
+     INNERBORDER="no"
+     borderStyle"sunken"
+     SINGLEINSTANCE="yes"
+     SHOWINTASKBAR="no"
+     CAPTION="no"
+     icon = "C:\Temp\g.ico"
+     windowstate="maximize"
+     border="none"
+
+>
+</head>
+
+<SCRIPT LANGUAGE="VBScript">
+
+     Dim objShell :Set objShell = CreateObject("WScript.Shell")
+        Dim dtmStartTime
+ window.resizeTo 1920,1080
+        window.moveTo intleft
+ dtmStartTime = Now
+        idTimer = window.setTimeout("Start", 100, "VBScript")
+
+    Sub Start
+       window.document.body.background = "a.jpg"
+       window.document.body.background = "a.png"
+       dtmStartTime = Now
+    End Sub
+ 
+
+Sub CloseWindow
+       If Window.Event.KeyCode= 27 Then 
+       self.close
+       End if 
+    End Sub
+
+ 
+</SCRIPT>
+
+<body onkeypress='CloseWindow'>
+
+
+</body>
+</html>
