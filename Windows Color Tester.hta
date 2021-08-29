@@ -1,0 +1,176 @@
+<html>
+<head>
+<title>To be decided</title>
+<HTA:APPLICATION
+  APPLICATIONNAME="yet to be decided"
+  SCROLL="no"
+  ID="MyHTMLapplication"
+  VERSION="0.01"/>
+ 
+</head>
+
+<script language="VBScript">
+Dim objShell :Set objShell = CreateObject("WScript.Shell")
+Dim dtmStartTime
+Dim oShell
+Dim black
+Dim blacknumber : blacknumber = 0
+
+ 
+Sub Window_OnLoad
+ Window.ResizeTo 200,200
+ black = 0
+ box.Value = blacknumber
+ idTimer = window.setTimeout("Colortxt", 50, "VBScript")
+End sub
+ 
+Sub Colortxt
+ Select Case black
+  Case 0
+    document.getElementById("Box1").style.backgroundColor = "yellow"
+    document.getElementById("Box2").style.backgroundColor = "blue"
+    document.getElementById("Box3").style.backgroundColor = "red"
+    document.getElementById("Box4").style.backgroundColor = "green"
+    document.getElementById("Box5").style.backgroundColor = "blue"
+    document.getElementById("Box6").style.backgroundColor = "red"
+    document.getElementById("Box7").style.backgroundColor = "green"
+    document.getElementById("Box8").style.backgroundColor = "yellow"
+    document.getElementById("Box9").style.backgroundColor = "red"
+    document.getElementById("Box10").style.backgroundColor = "green"
+    document.getElementById("Box11").style.backgroundColor = "yellow"
+    document.getElementById("Box12").style.backgroundColor = "blue"
+    document.getElementById("Box1a").style.backgroundColor = "yellow"
+    document.getElementById("Box2a").style.backgroundColor = "blue"
+    document.getElementById("Box3a").style.backgroundColor = "red"
+    document.getElementById("Box4a").style.backgroundColor = "green"
+    document.getElementById("Box5a").style.backgroundColor = "blue"
+    document.getElementById("Box6a").style.backgroundColor = "red"
+    document.getElementById("Box7a").style.backgroundColor = "green"
+    document.getElementById("Box8a").style.backgroundColor = "yellow"
+    document.getElementById("Box9a").style.backgroundColor = "red"
+    document.getElementById("Box10a").style.backgroundColor = "green"
+    document.getElementById("Box11a").style.backgroundColor = "yellow"
+    document.getElementById("Box12a").style.backgroundColor = "blue"
+    black = 1
+ blacknumber = blacknumber + 1
+ box.Value = blacknumber
+ idTimer = window.setTimeout("Colortxt", 50, "VBScript")
+  Case 1
+    document.getElementById("Box1").style.backgroundColor = "green"
+    document.getElementById("Box2").style.backgroundColor = "yellow"
+    document.getElementById("Box3").style.backgroundColor = "blue"
+    document.getElementById("Box4").style.backgroundColor = "red"
+    document.getElementById("Box5").style.backgroundColor = "yellow"
+    document.getElementById("Box6").style.backgroundColor = "blue"
+    document.getElementById("Box7").style.backgroundColor = "red"
+    document.getElementById("Box8").style.backgroundColor = "green"
+    document.getElementById("Box9").style.backgroundColor = "blue"
+    document.getElementById("Box10").style.backgroundColor = "red"
+    document.getElementById("Box11").style.backgroundColor = "green"
+    document.getElementById("Box12").style.backgroundColor = "yellow"
+    document.getElementById("Box1a").style.backgroundColor = "green"
+    document.getElementById("Box2a").style.backgroundColor = "yellow"
+    document.getElementById("Box3a").style.backgroundColor = "blue"
+    document.getElementById("Box4a").style.backgroundColor = "red"
+    document.getElementById("Box5a").style.backgroundColor = "yellow"
+    document.getElementById("Box6a").style.backgroundColor = "blue"
+    document.getElementById("Box7a").style.backgroundColor = "red"
+    document.getElementById("Box8a").style.backgroundColor = "green"
+    document.getElementById("Box9a").style.backgroundColor = "blue"
+    document.getElementById("Box10a").style.backgroundColor = "red"
+    document.getElementById("Box11a").style.backgroundColor = "green"
+    document.getElementById("Box12a").style.backgroundColor = "yellow"
+ black = 2
+ idTimer = window.setTimeout("Colortxt", 50, "VBScript")
+  Case 2
+    document.getElementById("Box1").style.backgroundColor = "red"
+    document.getElementById("Box2").style.backgroundColor = "green"
+    document.getElementById("Box3").style.backgroundColor = "yellow"
+    document.getElementById("Box4").style.backgroundColor = "blue"
+    document.getElementById("Box5").style.backgroundColor = "green"
+    document.getElementById("Box6").style.backgroundColor = "yellow"
+    document.getElementById("Box7").style.backgroundColor = "blue"
+    document.getElementById("Box8").style.backgroundColor = "red"
+    document.getElementById("Box9").style.backgroundColor = "yellow"
+    document.getElementById("Box10").style.backgroundColor = "blue"
+    document.getElementById("Box11").style.backgroundColor = "red"
+    document.getElementById("Box12").style.backgroundColor = "green"
+    document.getElementById("Box1a").style.backgroundColor = "red"
+    document.getElementById("Box2a").style.backgroundColor = "green"
+    document.getElementById("Box3a").style.backgroundColor = "yellow"
+    document.getElementById("Box4a").style.backgroundColor = "blue"
+    document.getElementById("Box5a").style.backgroundColor = "green"
+    document.getElementById("Box6a").style.backgroundColor = "yellow"
+    document.getElementById("Box7a").style.backgroundColor = "blue"
+    document.getElementById("Box8a").style.backgroundColor = "red"
+    document.getElementById("Box9a").style.backgroundColor = "yellow"
+    document.getElementById("Box10a").style.backgroundColor = "blue"
+    document.getElementById("Box11a").style.backgroundColor = "red"
+    document.getElementById("Box12a").style.backgroundColor = "green"
+ black = 3
+ idTimer = window.setTimeout("Colortxt", 50, "VBScript")
+  Case 3
+    document.getElementById("Box1").style.backgroundColor = "blue"
+    document.getElementById("Box2").style.backgroundColor = "red"
+    document.getElementById("Box3").style.backgroundColor = "green"
+    document.getElementById("Box4").style.backgroundColor = "yellow"
+    document.getElementById("Box5").style.backgroundColor = "red"
+    document.getElementById("Box6").style.backgroundColor = "green"
+    document.getElementById("Box7").style.backgroundColor = "yellow"
+    document.getElementById("Box8").style.backgroundColor = "blue"
+    document.getElementById("Box9").style.backgroundColor = "green"
+    document.getElementById("Box10").style.backgroundColor = "yellow"
+    document.getElementById("Box11").style.backgroundColor = "blue"
+    document.getElementById("Box12").style.backgroundColor = "red"
+    document.getElementById("Box1a").style.backgroundColor = "blue"
+    document.getElementById("Box2a").style.backgroundColor = "red"
+    document.getElementById("Box3a").style.backgroundColor = "green"
+    document.getElementById("Box4a").style.backgroundColor = "yellow"
+    document.getElementById("Box5a").style.backgroundColor = "red"
+    document.getElementById("Box6a").style.backgroundColor = "green"
+    document.getElementById("Box7a").style.backgroundColor = "yellow"
+    document.getElementById("Box8a").style.backgroundColor = "blue"
+    document.getElementById("Box9a").style.backgroundColor = "green"
+    document.getElementById("Box10a").style.backgroundColor = "yellow"
+    document.getElementById("Box11a").style.backgroundColor = "blue"
+    document.getElementById("Box12a").style.backgroundColor = "red"
+ black = 0
+ idTimer = window.setTimeout("Colortxt", 50, "VBScript")
+ End Select
+ 
+End Sub
+
+  
+
+
+
+  'This method will be called when the application loads
+  'Add your code here
+
+
+
+
+
+</script>
+
+
+<body bgcolor="black">
+
+<!--Add your controls here-->
+<Center>
+<textarea name="Box1" id="Box1" rows="2" cols="2" style="background-color:blue" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box2" id="Box2" rows="2" cols="2" style="background-color:red" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box3" id="Box3" rows="2" cols="2" style="background-color:green" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box4" id="Box4" rows="2" cols="2" style="background-color:yellow" style="overflow:hidden" style="border:Transparent"></textarea><!--NEXT--><textarea name="Box1a" id="Box1a" rows="2" cols="2" style="background-color:blue" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box2a" id="Box2a" rows="2" cols="2" style="background-color:red" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box3a" id="Box3a" rows="2" cols="2" style="background-color:green" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box4a" id="Box4a" rows="2" cols="2" style="background-color:yellow" style="overflow:hidden" style="border:Transparent"></textarea>
+<BR>
+<textarea name="Box5" id="Box5" rows="2" cols="2" style="background-color:red" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box6" id="Box6" rows="2" cols="2" style="background-color:green" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box7" id="Box7" rows="2" cols="2" style="background-color:yellow" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box8" id="Box8" rows="2" cols="2" style="background-color:blue" style="overflow:hidden" style="border:Transparent"></textarea><!--NEXT--><textarea name="Box5a" id="Box5a" rows="2" cols="2" style="background-color:red" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box6a" id="Box6a" rows="2" cols="2" style="background-color:green" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box7a" id="Box7a" rows="2" cols="2" style="background-color:yellow" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box8a" id="Box8a" rows="2" cols="2" style="background-color:blue" style="overflow:hidden" style="border:Transparent"></textarea>
+<BR>
+<textarea name="Box9" id="Box9" rows="2" cols="2" style="background-color:green" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box10" id="Box10" rows="2" cols="2" style="background-color:yellow" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box11" id="Box11" rows="2" cols="2" style="background-color:blue" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box12" id="Box12" rows="2" cols="2" style="background-color:red" style="overflow:hidden" style="border:Transparent"></textarea><!--NEXT--><textarea name="Box9a" id="Box9a" rows="2" cols="2" style="background-color:green" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box10a" id="Box10a" rows="2" cols="2" style="background-color:yellow" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box11a" id="Box11a" rows="2" cols="2" style="background-color:blue" style="overflow:hidden" style="border:Transparent"></textarea><textarea name="Box12a" id="Box12a" rows="2" cols="2" style="background-color:red" style="overflow:hidden" style="border:Transparent"></textarea>
+</CENTER>
+
+
+<br>
+<br>
+
+<input type="text" name="box" id="box" style="display:none;" >
+
+<!--{{InsertControlsHere}}-Do not remove this line-->
+</body>
+</html>
