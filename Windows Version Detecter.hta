@@ -1,0 +1,30 @@
+ <head>
+<title>Windows Version Detecter</title>
+<HTA:APPLICATION
+     APPLICATIONNAME="Windows Version Detecter"
+     SCROLL="yes"
+     SINGLEINSTANCE="yes"
+>
+</head>
+
+<script language="VBScript">
+
+    Sub GetOSVersion
+       strComputer = "."
+           Set objWMIService = GetObject("winmgmts:\\" & strComputer &  "\root\cimv2")
+
+           Set colOperatingSystems = objWMIService.ExecQuery _
+               ("Select * from Win32_OperatingSystem")
+
+           For Each objOperatingSystem in colOperatingSystems
+               Msgbox objOperatingSystem.Caption & " " & _
+                   objOperatingSystem.Version
+           Next
+    End Sub
+</script>
+
+<body>
+<input type="button" value="Operating System" name="run_button"  onClick="GetOSVersion">
+
+</body>
+
