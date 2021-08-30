@@ -1,0 +1,303 @@
+<html>
+<head>
+<title>Get System Information</title>
+<HTA:APPLICATION
+APPLICATIONNAME="Get System Information"
+ID="GetPCInfo"
+border="thin"
+MAXIMIZEBUTTON="no"
+SCROLL="NO"/>
+</head>
+
+<script language="VBScript">
+Public ApplicationList()
+
+Sub Window_OnLoad
+document.body.bgColor = "Silver"
+document.body.style.fontFamily = "Calibri"
+document.body.style.fontSize = "12 pt"
+document.body.style.color = "black"
+
+window.offscreenBuffering = True 'helps window refresh sometimes
+window.resizeTo 1100,720 'width,height
+window.moveTo (screen.width - document.body.clientwidth)/2, (screen.availheight - document.body.clientheight)/2
+
+Tab1.InnerText = "Applications"
+
+strComputer = "."
+
+Panel1.InnerHTML = "<hr color=""black""><TABLE align=""center"" border=""0"" cellspacing=""1"" width=""80%"">" &_
+    "<TR id=""Applications""><TD align=""left"">" &_
+    "<button name=""InstallFF"" id=""InstallFF"" Title=""Clicking on this button will install FireFox."" value=""Install FF"" style=""background-color:orange; color:black; border: 1pt ridge black"">Install FireFox</button>" &_
+    "<BR><BR><button name=""InstallChrome"" id=""InstallChrome"" Title=""Clicking on this button will install Chrome."" value=""Install Chrome"" style=""background-color:orange; color:black; border: 1pt ridge black"">Install Chrome</button>" &_
+    "<BR><BR><BR><BR><button name=""UninstallApps"" id=""UninstallApps"" Title=""Clicking on this button will uninstall applications."" value=""Uninstall Apps""" &_
+    " style=""background-color:red; color:black; border: 1pt ridge black"" onclick=""OnClickUninstallApps"">Uninstall Applications  </button><BR><span id = ""DataArea_Applications""></span>" &_
+    "<input id=""DontPromptBox"" type=""checkbox"">Don't prompt, just do it!</TD>" &_
+    "<TD align=""left"">" &_
+    "<div style=""overflow:auto; width:550x;"">" &_
+    "<select multiple size=""25"" name=""applistbox""></select></div><span id=""UninstallStatusArea"" font style=color:red;font-weight=bold;></span></TD></TR></Table>"
+
+    UninstallStatusArea.InnerText = ""
+    DontPromptBox.checked = True 
+
+    Call Get_Applications(strComputer)
+End Sub
+
+'===================================
+'==  SUB GET APPLICATION LIST  =====
+'===================================
+Sub Get_Applications(strComputerName)
+Dim UnInstallList(), InstallDateList(), InstallRegList()
+Dim strTemp, strTemp2, strTemp3, strValue1, strValue2, strValue3, strValue4, temp, temp2, temp3, temp4
+Const HKLM = &H80000002 'HKEY_LOCAL_MACHINE
+strKey = "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\"
+strEntry1 = "DisplayName"
+strEntry2 = "DisplayVersion"
+strEntry3 = "UninstallString"
+strEntry4 = "InstallDate"
+
+Set objReg = GetObject("winmgmts://" & strComputerName & "/root/default:StdRegProv")
+objReg.EnumKey HKLM, strKey, arrSubkeys
+
+i = 0
+For Each strSubkey In arrSubkeys
+    strTemp = "" : strTemp2 = "" : strTemp3 = ""
+    strValue1 = "" : strValue2 = "" : strValue3 = "" : strValue4 = ""
+    intRet1 = objReg.GetStringValue(HKLM, strKey & strSubkey, strEntry1, strValue1)
+    If intRet1 <> 0 Then objReg.GetStringValue HKLM, strKey & strSubkey, strEntry1, strValue1
+    If strValue1 <> "" Then strTemp = strValue1
+    objReg.GetStringValue HKLM, strKey & strSubkey, strEntry2, strValue2
+    If strValue2 <> "" Then strTemp = strTemp & " Version: " & strValue2
+    objReg.GetStringValue HKLM, strKey & strSubkey, strEntry3, strValue3
+    If strValue3 <> "" Then strTemp2 = strValue3
+    objReg.GetStringValue HKLM, strKey & strSubkey, strEntry4, strValue4
+    If strValue4 <> "" Then strTemp3 = strValue4
+    ReDim Preserve ApplicationList(i)
+    ReDim Preserve UnInstallList(i)
+    ReDim Preserve InstallDateList(i)
+    ReDim Preserve InstallRegList(i)
+    If Len(strTemp) > 8 Then
+        If Len(strTemp2) > 8 Then
+            ApplicationList(i) = strTemp
+            UnInstallList(i) = strTemp2
+            InstallDateList(i) = strTemp3
+            InstallRegList(i) = strKey & strSubkey
+            i = i + 1
+        End If
+    End if
+Next
+
+'now look at x64 keys
+Set objWMIService = GetObject("winmgmts:{impersonationLevel=impersonate}!\\" & strComputerName & "\root\cimv2")
+Set colOS = objWMIService.ExecQuery ("Select * From Win32_OperatingSystem")
+For Each objItem In colOS
+    strArch = objItem.OSArchitecture
+Next
+If InStr(strArch,"64") Then
+    strKey = "SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\"
+    objReg.EnumKey HKLM, strKey, arrSubkeys
+    For Each strSubkey In arrSubkeys
+        strTemp = ""
+        strTemp2 = ""
+        strTemp3 = ""
+        strValue1 = ""
+        strValue2 = ""
+        strValue3 = ""
+        strValue4 = ""
+        intRet1 = objReg.GetStringValue(HKLM, strKey & strSubkey, strEntry1, strValue1)
+        If intRet1 <> 0 Then objReg.GetStringValue HKLM, strKey & strSubkey, strEntry1, strValue1
+        If strValue1 <> "" Then strTemp = strValue1
+        objReg.GetStringValue HKLM, strKey & strSubkey, strEntry2, strValue2
+        If strValue2 <> "" Then strTemp = strTemp & " Version: " & strValue2
+        objReg.GetStringValue HKLM, strKey & strSubkey, strEntry3, strValue3
+        If strValue3 <> "" Then strTemp2 = strValue3
+        objReg.GetStringValue HKLM, strKey & strSubkey, strEntry4, strValue4
+        If strValue3 <> "" Then strTemp3 = strValue4
+        ReDim Preserve ApplicationList(i)
+        ReDim Preserve UnInstallList(i)
+        ReDim Preserve InstallDateList(i)
+        ReDim Preserve InstallRegList(i)
+        If Len(strTemp) > 8 Then
+            If Len(strTemp2) > 8 Then
+                ApplicationList(i) = strTemp
+                UnInstallList(i) = strTemp2
+                InstallDateList(i) = strTemp3
+                InstallRegList(i) = strKey & strSubkey
+                i = i + 1
+            End If
+        End if
+    Next
+End If
+
+'alphabatize the array for easier readability
+For a = UBound(ApplicationList) - 1 To 0 Step -1
+    For j = 0 to a
+        If LCase(ApplicationList(j)) > LCase(ApplicationList(j+1)) then
+            temp = ApplicationList(j+1)
+            temp2 = UnInstallList(j+1)
+            temp3 = InstallDateList(j+1)
+            temp4 = InstallRegList(j+1)
+            ApplicationList(j+1) = ApplicationList(j)
+            UnInstallList(j+1) = UnInstallList(j)
+            InstallDateList(j+1) = InstallDateList(j)
+            InstallRegList(j+1) = InstallRegList(j)
+            ApplicationList(j) = temp
+            UnInstallList(j) = temp2
+            InstallDateList(j) = temp3
+            InstallRegList(j) = temp4
+        End If
+    Next
+Next
+
+'create the listbox from the array
+For j = 0 To UBound(ApplicationList)
+    Set objOption = Document.createElement("OPTION")
+    objOption.Text = ApplicationList(j)
+    If Len(InstallDateList(j)) > 0 then objOption.Text = objOption.Text & ", Install Date: " & InstallDateList(j)
+    objOption.Value = UnInstallList(j)
+    objOption.title = "Uninstall details found in Registry key:" & vbCrLf & InstallRegList(j)
+    objOption.style.backgroundcolor = "#D4E5B3"
+    applistbox.Add(objOption)
+Next
+End Sub
+
+'==================================
+'==  SUB UNINSTALL APPLICATIONS  ==
+'==================================
+Sub OnClickUninstallApps()
+Dim i, j, iFind, UninstallString, UninstallRegString, strTemp23, strResults, iSelect, strComputerName
+Dim objShell : set objShell = CreateObject("WScript.Shell")
+strComputerName = "."
+ShowCommand = 0
+PSExec = "c:\pstools\psexec.exe -s -h \\"
+strResults = ""
+iSelect = 0
+
+For i = 0 To applistbox.length - 1
+    If applistbox(i).selected Then
+        iSelect = 1
+        UninstallStatusArea.InnerText = "Currently uninstalling " & applistbox(i).Text
+        Call SleepWait(2) 'rather than uninstall, display the text for troubleshooting purposes
+        UninstallStatusArea.InnerText = " "
+        SleepWait(1)
+        strResults = strResults & applistbox(i).Text & vbCrLf & vbCrLf 
+    End If
+Next
+If iSelect = 1 Then
+    Call ClearAppListbox()
+    Call Get_Applications(strComputerName)
+    set objShell = CreateObject("WScript.Shell")
+    objShell.Popup strResults,0,strComputerName & " - Uninstall Results"
+Else
+    MsgBox "No applications selected to uninstall.",vbOKOnly,"I did nothing"
+End If
+End Sub
+
+'===============================
+'==  SUB CLEAR APP LISTBOX  ====
+'===============================
+Sub ClearAppListbox()
+For Each objOption in applistbox.Options
+    objOption.RemoveNode
+Next 
+End Sub
+
+'========================================
+'= SleepWait - Momentary pause ==========
+'========================================
+Sub SleepWait(timeinseconds) 'Allows application to wait, if needed.
+If timeinseconds = 0 Then timeinseconds = 0.2
+With CreateObject("WScript.Shell")
+  .run "timeout " & timeinseconds, 0, True
+End With
+End Sub
+
+</script>
+
+<!--
+===================================
+== JAVASCRIPT =====================
+===================================
+-->
+<script type="text/javascript">
+var panels = new Array("","panel1","panel2");
+function panel(tab) {
+for (i=1; i<panels.length; i++) {
+    if (i == tab) {
+        document.getElementById("tab"+i).className = "tabs tabs1";
+        document.getElementById("panel"+i).style.display = "block";
+    } else {
+        document.getElementById("tab"+i).className = "tabs tabs0";
+        document.getElementById("panel"+i).style.display = "none";
+    }
+}
+}
+</script>
+
+<style type="text/css">
+body,td,th { font-family:Calibri }
+.head { font-size:110%; font-weight:bold }
+.panel {
+background-color: skyblue;
+border: solid 1px black;
+height: 480px;
+padding: 5px;
+position: relative;
+width: 1000px;
+z-index: 0;
+}
+.tabs {
+border-collapse: collapse;
+color: black;
+cursor: pointer;
+cursor: hand;
+font-family: calibri;
+font-size: 9pt;
+font-weight: bold;
+margin-top: 4px;
+padding: 2px 4px 0px 4px;
+position: relative;
+text-align: center;
+text-decoration: none;
+z-index: 1;
+}
+.tabs0 {
+background-color: wheat;
+border: solid 1px black;
+}
+.tabs1 {
+background-color: skyblue;
+border-color: black black silver black;
+border-style: solid solid solid solid;
+border-width: 1px 1px 1px 1px;
+}
+hr {
+border: 1;
+width: 99%;
+background-color: #0000FF;
+height: 3px;
+}
+
+button {
+color: white;
+background-color: #4F7BA6;
+border: 1px solid darkblue;
+}
+</style>
+</head>
+
+<body>
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="1000">
+<tr valign="top">
+<td colspan="2">
+&nbsp; <span class="tabs tabs1" id="tab1" onclick="panel(1)">Tab1</span>
+&nbsp; <span class="tabs tabs0" id="tab2" onclick="panel(2)">Tab2</span>
+<div class="panel" id="panel1" style="display:block">
+</div>
+<div class="panel" id="panel2" style="display:none">
+</div>
+</td>
+</tr>
+</table>
+</body>
+</html>
