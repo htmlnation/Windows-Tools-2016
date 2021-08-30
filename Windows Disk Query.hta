@@ -1,0 +1,742 @@
+<html>
+	<head>
+		<title>Disk Query</title> 
+		 
+		<hta:application 
+			id="objDiskQuery"
+			applicationname="DiskQuery" 
+			border="dialog"
+			borderstyle="normal"
+			caption="yes"
+			contextmenu="no"
+			icon=""
+			scroll="no"
+			showintaskbar="yes"
+			singleinstance="no"
+			sysmenu="no"
+			version="1.0"
+			windowstate="">
+			
+
+		<style type="text/css">
+			body {
+				font:10 pt palatino; 
+				color:white;
+				filter:progid:DXImageTransform.Microsoft.Gradient
+				(GradientType=0, StartColorStr='#666666', EndColorStr='#1A1A1A')
+			}
+			
+			#Info {
+				position: absolute; 
+				top: 10px; 
+				right: 13px;
+			}
+
+			#Selector {
+				position: absolute; 
+				height: 63px;
+				top: 10px; 
+				left: 13px;
+				padding-right: 10px;
+				border-right: 2px solid #CCCCCC;
+			}
+
+			#Header {
+				position: fixed;
+				width: 100%;
+				height: 65px;
+				border-bottom: 2px solid #CCCCCC;
+				margin-bottom: 2px;
+			}
+			
+			#Controls {
+				position: absolute; 
+				top: 10px; 
+				right: 250px;
+			}
+
+			#Input {
+				position: absolute; 
+				height: 63px;
+				width: 250px;
+				top: 10px; 
+				left: 220px;
+				padding-right: 5px;
+				border-right: 2px solid #CCCCCC;
+			}
+
+			#Data {
+				overflow: auto;
+				width: 100%;
+				height: 88%;
+			}
+
+			th {
+				background-color:#000000;
+			}
+
+			table, th, td {
+				border:1px solid gray;
+				border-collapse: collapse;
+			}
+
+			table {
+				width:100%;
+				font: 16px;
+			}
+
+			td, th {
+				white-space: nowrap;
+				overflow: hidden;
+			}
+
+			.box {
+				position: absolute;
+			}
+
+			.graph {
+				width:104px;
+				height:100%;
+				padding:1px 1px 1px 1px;
+				border: 1px solid #CCCCCC;
+			}
+
+			.bar{
+				width: 100%;
+				display: inline;
+			}
+
+			.button {
+				box-shadow:inset 0px 1px 0px 0px #ffffff;
+				background:color-stop(1, #dfdfdf) );
+				filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
+				background-color:#ededed;
+				border-radius:6px;
+				border:1px solid #dcdcdc;
+				display:inline-block;
+				color:#777777;
+				font-family:Verdana;
+				font-size:12px;
+				font-weight:bold;
+				padding:6px 14px;
+				text-decoration:none;
+				text-align: center;
+				text-shadow:1px 1px 0px #ffffff;
+			}
+			
+			.button:hover {
+				background:color-stop(1, #ededed) );
+				filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
+				background-color:#dfdfdf;
+			}
+			
+			.button:active {
+				background-color:#adadad;
+			}
+
+			img {
+				border: none;
+			}
+
+			a {
+				color: white;
+				text-decoration: none;
+			}
+
+			li a{
+				color: white;
+				text-decoration: none;
+				height: 2em;
+				width: 8em;
+			}
+			
+			li {	
+				list-style: none;
+				display: inline;
+			}
+		</style>
+				
+		<script language="VBScript" type="text/vbscript">
+			Public strHTML
+			Public AdminName
+			Public AdminPass
+
+			'********************************************************************************
+
+			Sub window_Onload
+				window.ResizeTo 1000,600
+				window.MoveTo (screen.Width - 1000)/2, (screen.Height - 600)/2
+			End sub
+
+			'********************************************************************************
+
+			Sub ClearWindow
+				DataTable.InnerHTML = ""
+				strHTML = ""
+				FileBox.outerHTML = FileBox.outerHTML
+				TextBox.Value = ""
+				IPStart.value = ""
+				IPStop.value = ""
+				document.getElementById("TextBox").style.backgroundcolor = "#FFFFFF"
+				document.getElementById("IPStart").style.backgroundcolor = "#FFFFFF"
+				document.getElementById("IPStop").style.backgroundcolor = "#FFFFFF"
+			End Sub
+
+			'********************************************************************************
+
+			Sub QueryDisks
+				
+				If TextBox.value = "" Then
+					window.document.Body.Style.Cursor = "default"
+					Exit Sub
+				End If
+				
+				Const CONVERTTOGB= 1073741824 'Bytes in GB
+				
+				DriveCount = 0
+				strComputer = TextBox.value 'InputBox("Enter the Computer Name or IP address")
+				
+				If CheckBox1.checked = True Then
+					Set objSWbemLocator = CreateObject("wbemScripting.SwbemLocator")
+					Set objWMI = objSWbemLocator.ConnectServer _
+						(strComputer, "", AdminName, AdminPass)		
+					Set objWMIService = objSWbemLocator.ConnectServer _
+						(strComputer, "root\CIMV2", AdminName, AdminPass)
+				Else
+					Set objWMI = GetObject("winmgmts:{impersonationLevel=impersonate}!//" & strComputer & "")
+					Set objWMIService = GetObject("winmgmts:{impersonationLevel=impersonate}!\\"_
+						& strComputer & "\root\CIMV2")
+				End If
+				
+				Set colOS = objWMI.ExecQuery("Select * from Win32_ComputerSystem")
+				For Each objItem In colOS
+					If strUsers <> "" Then
+						strUsers = strUsers & ", " & objItem.UserName
+					Else
+						strUsers = objItem.UserName
+					End If
+					
+					strComputer = objItem.DNSHostName
+
+				Next
+				Set colLogicalDisks = objWMIService.ExecQuery ("Select * from Win32_LogicalDisk")
+				Set colNetworkDisks = objWMIService.ExecQuery("Select * from Win32_MappedLogicalDisk")
+				Set colNetworkAdaptors = objWMIService.ExecQuery("Select * from Win32_NetworkAdapterConfiguration where IPEnabled=TRUE",,48)
+				
+				strIP = ""
+				For Each objNetworkAdaptor In colNetworkAdaptors
+					Set objAdaptor = objWMIService.Get ("Win32_NetworkAdapter.DeviceID=" & objNetworkAdaptor.Index)
+					If objAdaptor.PhysicalAdapter = True Then
+						If objAdaptor.NetConnectionStatus = 2 Then
+							If objAdaptor.AdapterTypeID = 0 Then
+								If InStr(1,objAdaptor.NetConnectionID, "VM") = 0 And InStr(1,objAdaptor.NetConnectionID, "Virtual") = 0 Then					
+									If Not IsNull(objNetworkAdaptor.IPAddress) Then 		
+										For i=LBound(objNetworkAdaptor.IPAddress) To UBound(objNetworkAdaptor.IPAddress) 
+											If Mid(objNetworkAdaptor.IPAddress(i),1,3) <> "169" Then
+												If Not InStr(objNetworkAdaptor.IPAddress(i), ":") > 0 Then
+													If LastMac = "" Then 
+														strIP = ListIPAdds & objNetworkAdaptor.IPAddress(i)
+														LastMac = objNetworkAdaptor.MACAddress
+													End If
+												End If
+											End If
+										Next 
+									End If 
+								End If
+							End If
+						End If
+					End If
+				Next	
+
+				
+				strHTML = "<table width=" & Chr(34) & "95%" & Chr(34) & ">"
+				strHTML = strHTML & "<tr>"
+				strHTML = strHTML & "<th>Logged on user:</th>"
+				strHTML = strHTML & "<td>" & strUsers & "</td>"
+				strHTML = strHTML & "</tr>"
+				strHTML = strHTML & "<tr>"
+				strHTML = strHTML & "<th>Computer</th>"
+				strHTML = strHTML & "<th>Drive Letter</th>"
+				strHTML = strHTML & "<th>Drive Type</th>"
+				strHTML = strHTML & "<th></th>"
+				strHTML = strHTML & "<th>Total Size</th>"
+				strHTML = strHTML & "<th>Free Space</th>"
+				strHTML = strHTML & "<th>Percent Free</th>"
+				strHTML = strHTML & "</tr>"
+				For Each objLogicalDisk In colLogicalDisks
+					if objLogicalDisk.drivetype=2 then
+						if IsNumeric(objLogicalDisk.size) then
+							DriveCount = DriveCount + 1				
+							PercentFilled = 100 - FormatNumber((objLogicalDisk.freespace/CONVERTTOGB*100)/(objLogicalDisk.size/CONVERTTOGB),2)
+							HorizontalBar = ""
+							HorizontalBar = HorizontalBar & "<div class=" & Chr(34) & "graph" & Chr(34) & ">"
+							HorizontalBar = HorizontalBar & "<div class=" & Chr(34) & "bar" & Chr(34) & "id=" & Chr(34) & "bar" & DriveCount & Chr(34) & "style=" & Chr(34) & "width:" & PercentFilled & "px;" & "Height: 20px;" & Chr(34) & "></div>"
+							HorizontalBar = HorizontalBar & "</div>"
+							strHTML = strHTML & "<tr>"
+							strHTML = strHTML & "<td>" & strComputer & "  |  " & strIP & "</td>"
+							strHTML = strHTML & "<td>" & objLogicalDisk.DeviceID & "   " & objLogicalDisk.VolumeName & "</td>"
+							strHTML = strHTML & "<td>Removable Disk</td>"
+							strHTML = strHTML & "<td>" & HorizontalBar & "</td>"
+							strHTML = strHTML & "<td>" & FormatNumber(objLogicalDisk.size/CONVERTTOGB,2) & " GB</td>"
+							strHTML = strHTML & "<td>" & FormatNumber(objLogicalDisk.freespace/CONVERTTOGB,2) & " GB</td>"
+							strHTML = strHTML & "<td>" & FormatNumber((objLogicalDisk.freespace/CONVERTTOGB*100)/(objLogicalDisk.size/CONVERTTOGB),2) & "%</td>"
+							strHTML = strHTML & "</tr>"
+						end if
+					end if	
+					if objLogicalDisk.drivetype=3 then
+						if IsNumeric(objLogicalDisk.size) then
+							DriveCount = DriveCount + 1				
+							PercentFilled = 100 - FormatNumber((objLogicalDisk.freespace/CONVERTTOGB*100)/(objLogicalDisk.size/CONVERTTOGB),2)
+							HorizontalBar = ""
+							HorizontalBar = HorizontalBar & "<div class=" & Chr(34) & "graph" & Chr(34) & ">"
+							HorizontalBar = HorizontalBar & "<div class=" & Chr(34) & "bar" & Chr(34) & "id=" & Chr(34) & "bar" & DriveCount & Chr(34) & "style=" & Chr(34) & "width:" & PercentFilled & "px;" & "Height: 20px;" & Chr(34) & "></div>"
+							HorizontalBar = HorizontalBar & "</div>"
+							strHTML = strHTML & "<tr>"
+							strHTML = strHTML & "<td>" & strComputer & "  |  " & strIP & "</td>"
+							strHTML = strHTML & "<td><a href=" & Chr(34) & "\\" & strComputer & "\" & Mid(objLogicalDisk.DeviceID,1,1) & "$" & Chr(34) & ">" & objLogicalDisk.DeviceID & "   " & objLogicalDisk.VolumeName & "</a></td>"
+							strHTML = strHTML & "<td>Local Disk</td>"
+							strHTML = strHTML & "<td>" & HorizontalBar & "</td>"
+							strHTML = strHTML & "<td>" & FormatNumber(objLogicalDisk.size/CONVERTTOGB,2) & " GB</td>"
+							strHTML = strHTML & "<td>" & FormatNumber(objLogicalDisk.freespace/CONVERTTOGB,2) & " GB</td>"
+							strHTML = strHTML & "<td>" & FormatNumber((objLogicalDisk.freespace/CONVERTTOGB*100)/(objLogicalDisk.size/CONVERTTOGB),2) & "%</td>"
+							strHTML = strHTML & "</tr>"
+						end if
+					end if
+				Next
+						
+				For Each objNetworkDisk in colNetworkDisks
+					DriveCount = DriveCount + 1				
+					PercentFilled = 100 - FormatNumber((objNetworkDisk.freespace/CONVERTTOGB*100)/(objNetworkDisk.size/CONVERTTOGB),2)
+					HorizontalBar = ""
+					HorizontalBar = HorizontalBar & "<div class=" & Chr(34) & "graph" & Chr(34) & ">"
+					HorizontalBar = HorizontalBar & "<div class=" & Chr(34) & "bar" & Chr(34) & "id=" & Chr(34) & "bar" & DriveCount & Chr(34) & "style=" & Chr(34) & "width:" & PercentFilled & "px;" & "Height: 20px;" & Chr(34) & "></div>"
+					HorizontalBar = HorizontalBar & "</div>"
+					strHTML = strHTML & "<tr>"
+					strHTML = strHTML & "<td>" & strComputer & "  |  " & strIP & "</td>"
+					strHTML = strHTML & "<td><a href=" & Chr(34) & objNetworkDisk.ProviderName & Chr(34) & ">" & objNetworkDisk.Name & objNetworkDisk.ProviderName & "</td>"
+					strHTML = strHTML & "<td>Network Disk</td>"
+					strHTML = strHTML & "<td>" & HorizontalBar & "</td>"
+					strHTML = strHTML & "<td>" & FormatNumber(objNetworkDisk.size/CONVERTTOGB,2) & " GB</td>"
+					strHTML = strHTML & "<td>" & FormatNumber(objNetworkDisk.freespace/CONVERTTOGB,2) & " GB</td>"
+					strHTML = strHTML & "<td>" & FormatNumber((objNetworkDisk.freespace/CONVERTTOGB*100)/(objNetworkDisk.size/CONVERTTOGB),2) & "%</td>"
+					strHTML = strHTML & "</tr>"
+				Next
+				
+				strHTML = strHTML & "</table>"
+				DataTable.innerHTML = strHTML & "<br>" & DataTable.innerHTML
+				
+				For i = 1 to DriveCount
+					If Len(document.getElementById("bar" & i).style.width) = 3 Then
+						If Mid(document.getElementById("bar" & i).style.width,1,1) = 0 Then
+							val = 0
+						End If
+					ElseIf Len(document.getElementById("bar" & i).style.width) = 4 Then
+						val = cInt(Mid(document.getElementById("bar" & i).style.width,1,2))
+					ElseIf Len(document.getElementById("bar" & i).style.width) = 5 Then
+						val = cInt(Mid(document.getElementById("bar" & i).style.width,1,3))
+					End If
+					
+					If val >= 85 Then
+						document.getElementById("bar" & i).style.background = "#B80000" ' Red
+					ElseIf val >= 75 Then
+						document.getElementById("bar" & i).style.background = "#FF8800" ' Orange
+					ElseIf val >= 50 Then
+						document.getElementById("bar" & i).style.background = "#EDED00" ' Yellow
+					ElseIf val >= 0 Then
+						document.getElementById("bar" & i).style.background = "#008000" ' Green
+					End If
+					val = 0
+				Next
+				window.document.Body.Style.Cursor = "default"
+			End Sub
+
+			'********************************************************************************
+
+			Sub Validate(xBox)
+				arrOctet = Split(document.getElementById(xBox).value, ".")
+				If UBound(arrOctet) = 3 Then
+					If arrOctet(3) = "" Then
+						document.getElementById(xBox).style.backgroundcolor = "#FFB0B0"
+						Exit Sub
+					End If
+					If 0 < CInt(arrOctet(0)) < 256 Then
+						If 0 < CInt(arrOctet(1)) < 256 Then
+							If 0 < CInt(arrOctet(2)) < 256 Then
+								If 0 < CInt(arrOctet(3)) < 256 Then
+									document.getElementById(xBox).style.backgroundcolor = "#FFFFFF"
+								Else
+									document.getElementById(xBox).style.backgroundcolor = "#FFB0B0"
+								End If
+							Else
+								document.getElementById(xBox).style.backgroundcolor = "#FFB0B0"
+							End If
+						Else
+							document.getElementById(xBox).style.backgroundcolor = "#FFB0B0"
+						End If	
+					Else
+						document.getElementById(xBox).style.backgroundcolor = "#FFB0B0"
+					End If
+				Else
+					document.getElementById(xBox).style.backgroundcolor = "#FFB0B0"
+				End If
+				
+				If xBox = "TextBox" Then
+					strVal = Replace(document.getElementById(xBox).value, ".", "")
+					If Not IsNumeric(strVal) Then
+						document.getElementById(xBox).style.backgroundcolor = "#FFFFFF"
+					End If
+				End If
+			End Sub
+
+			'********************************************************************************
+
+			Sub ExportFile
+				Dim sFilePath
+				Dim objFSO 
+				Dim objFile
+				Dim objTextFile
+				Dim objShell
+				
+				Const ForWriting = 2
+				Const ssfDESKTOP = 0
+				
+				If strHTML = "" Then Exit Sub
+				
+				Set objShell = CreateObject("shell.application")
+				Set sFilePath = objShell.BrowseForFolder(0, "Select Destination Folder", 0, ssfDESKTOP)
+				
+				Set objWMI = GetObject("winmgmts:{impersonationLevel=impersonate}!//" & strComputer & "")
+				Set colOS = objWMI.ExecQuery("Select * from Win32_ComputerSystem")
+				For Each objItem In colOS
+					If strUser <> "" Then
+						strUser = strUser & ", " & objItem.UserName
+					Else
+						strUser = objItem.UserName
+					End If
+					If strComputer <> "" Then
+						strComputer = strComputer & ", " & objItem.UserName
+					Else
+						strComputer = objItem.DNSHostName
+					End If		
+					
+				Next	
+				
+				If sFilePath Is Nothing Then Exit Sub
+				
+				sFilePath = sFilePath.Self.Path
+				sFilePath = sFilePath & "\DiskSpace-"
+				toDate = Year(Now()) & "-" 
+				If Len(Month(Now())) = 1 Then
+					toDate = toDate & "0" & Month(Now()) & "-"
+				Else
+					toDate = toDate & Month(Now()) & "-"
+				End If
+				If Len(Day(Now())) = 1 Then
+					toDate = toDate & "0" & Day(Now())
+				Else
+					toDate = toDate & Day(Now())
+				End If
+				sFilePath = sFilePath & toDate & ".html"
+				
+				Set objFSO = CreateObject("Scripting.FileSystemObject")
+				Set objFile = objFSO.CreateTextFile(sFilePath)
+				objFile.Close
+				
+				headerHTML = "<html><head><title>Disk Query</title><style type=" & Chr(34) & "text/css" & Chr(34) & _
+				">body {font:12 pt palatino;color: black;}th {background-color:#C2DFFF;}table, th, td {border:1px solid gray;" & _
+				"border-collapse: collapse;}table {width:75%;font: 16px arial;}td, th {white-space: nowrap;overflow: hidden;}" & _
+				".graph {width:104px;height:100%;padding:1px 1px 1px 1px;border: 1px solid #CCCCCC;}</style></head><body>" & _
+				"<div style=" & Chr(34) & "margin-left: 10%;" & Chr(34) & "><h2>Execution Details</h2><p>User: " & strUser & "<br>" & _
+				"Computer: " & strComputer & "<br>Report Date: " & Now() & "</p></div><div align=" & Chr(34) & "center" & Chr(34) & ">"
+				
+				If objFSO.FileExists(sFilePath) Then
+				   Set objFile = objFSO.OpenTextFile(sFilePath, ForWriting)
+					ObjFile.WriteLine headerHTML
+					objFile.WriteLine DataTable.innerHTML
+					objFile.WriteLine "</div>"
+					objFile.Close
+				End If
+			End Sub
+
+			'********************************************************************************
+
+			Sub Ping
+
+				Dim strLocalHost, strComputer
+				Dim objWMIService, colItems, objItem
+
+				strLocalHost = "."
+				strComputer = TextBox.value
+
+				REM On Error Resume Next
+				Set objWMIService = GetObject("winmgmts:{impersonationLevel=impersonate}//" & _
+					strLocalHost & "\root\cimv2")
+				Set colItems = objWMIService.ExecQuery ("Select * from Win32_PingStatus " & _
+					"Where Address = '" & strComputer & "'")
+				For Each objItem in colItems
+					If objItem.StatusCode = 0 Then
+						QueryDisks
+					Else
+						strHTML = "<table width=" & Chr(34) & "95%" & Chr(34) & ">"
+						strHTML = strHTML & "<tr>"
+						strHTML = strHTML & "<th>Computer</th>"
+						strHTML = strHTML & "<th>Conection Status</th>"
+						strHTML = strHTML & "</tr>"			
+						strHTML = strHTML & "<tr>"
+						strHTML = strHTML & "<td>" & strComputer & "</td>"
+						strHTML = strHTML & "<td>Unable to connect (Ping Failed!)</td>"
+						strHTML = strHTML & "</tr>"
+						strHTML = strHTML & "</table>"
+						DataTable.innerHTML = strHTML & "<br>" & DataTable.innerHTML
+					End If
+				Next
+				On Error GoTo 0
+			End Sub
+
+			'********************************************************************************
+
+			Sub QueryFile
+				Dim objFSO, strTextFile, strData, strLine, arrLines
+				Const ForReading = 1
+
+				If FileBox.Value = "" Then
+					window.document.Body.Style.Cursor = "default"
+					Exit Sub
+				End If
+				
+				'name of the text file
+				strTextFile = FileBox.Value
+
+				'Create a File System Object
+				Set objFSO = CreateObject("Scripting.FileSystemObject")
+
+				'Open the text file - strData now contains the whole file
+				strData = objFSO.OpenTextFile(strTextFile,ForReading).ReadAll
+
+				'Split the text file into lines
+				arrLines = Split(strData,vbCrLf)
+
+				'Step through the lines
+				For Each strLine in arrLines
+					If strLine <> "" Then 
+						TextBox.Value = strLine
+						Ping
+					End IF
+				Next
+				
+				FileBox.outerHTML = FileBox.outerHTML
+				TextBox.Value = ""
+				window.document.Body.Style.Cursor = "default"
+			End Sub
+
+			'********************************************************************************
+
+			Sub QueryRange
+
+				If IPStart.value = "" Or IPStop.value = "" Then 
+					window.document.Body.Style.Cursor = "default"
+					Exit Sub
+				End If
+				
+				arrOctStart = Split(IPStart.value, ".")
+				arrOctStop = Split(IPStop.value, ".")
+				
+				If arrOctStart(0) = arrOctStop(0) Then
+					If arrOctStart(1) = arrOctStop(1) Then
+						If arrOctStart(2) = arrOctStop(2) Then
+							If arrOctStart(3) > arrOctStop(3) Then
+								document.getElementById("IPStart").style.backgroundcolor = "#FFB0B0"
+								document.getElementById("IPStop").style.backgroundcolor = "#FFB0B0"
+								window.document.Body.Style.Cursor = "default"
+								Exit Sub
+							End If
+						ElseIf arrOctStart(2) > arrOctStop(2) Then
+							document.getElementById("IPStart").style.backgroundcolor = "#FFB0B0"
+							document.getElementById("IPStop").style.backgroundcolor = "#FFB0B0"
+							window.document.Body.Style.Cursor = "default"
+							Exit Sub
+						End If
+					ElseIf arrOctStart(1) > arrOctStop(1) Then
+						document.getElementById("IPStart").style.backgroundcolor = "#FFB0B0"
+						document.getElementById("IPStop").style.backgroundcolor = "#FFB0B0"
+						window.document.Body.Style.Cursor = "default"
+						Exit Sub
+					End If
+				ElseIf arrOctStart(0) > arrOctStop(0) Then
+					document.getElementById("IPStart").style.backgroundcolor = "#FFB0B0"
+					document.getElementById("IPStop").style.backgroundcolor = "#FFB0B0"
+					window.document.Body.Style.Cursor = "default"
+					Exit Sub
+				End If
+				
+				For Oct0 = arrOctStart(0) to arrOctStop(0)
+					x1 = arrOctStop(1)
+					If CInt(arrOctStart(1)) > CInt(arrOctStop(1)) Or CInt(Oct0) < CInt(arrOctStop(0)) Then
+						arrOctStop(1) = 255
+					End If
+					For Oct1 = arrOctStart(1) to arrOctStop(1)
+						x2 = arrOctStop(2)
+						If CInt(arrOctStart(2)) > CInt(arrOctStop(2)) Or CInt(Oct1) < CInt(arrOctStop(1)) Then
+							arrOctStop(2) = 255
+						End If
+						For Oct2 = arrOctStart(2) to arrOctStop(2)
+							x3 = arrOctStop(3)
+							If CInt(arrOctStart(3)) > CInt(arrOctStop(3)) Or  CInt(Oct2) < CInt(arrOctStop(2)) Then
+									arrOctStop(3) = 255
+							End If
+							For Oct3 = arrOctStart(3) to arrOctStop(3)
+								ipAddress = Oct0 & "."
+								ipAddress = ipAddress & Oct1 & "."
+								ipAddress = ipAddress & Oct2 & "."
+								ipAddress = ipAddress & Oct3
+								TextBox.Value = ipAddress
+								Ping
+								If Oct0 = 255 And Oct1 = 255 And Oct2 = 255 And Oct3 = 255 Then
+									window.document.Body.Style.Cursor = "default"
+									Exit Sub
+								End If
+							Next
+							arrOctStart(3) = 1
+							arrOctStop(3) = x3
+						Next
+						arrOctStart(2) = 1
+						arrOctStop(2) = x2
+					Next
+					arrOctStart(1) = 1
+					arrOctStop(1) = x1		
+				Next
+				IPStart.value = ""
+				IPStop.value = ""
+				TextBox.Value = ""
+				window.document.Body.Style.Cursor = "default"
+			End Sub
+
+			'********************************************************************************
+
+			Sub RadioSelect
+			
+				FileBox.outerHTML = FileBox.outerHTML
+				TextBox.Value = ""
+				IPStart.value = ""
+				IPStop.value = ""
+				document.getElementById("Box1").style.visibility = "hidden"					
+				document.getElementById("Box2").style.visibility = "hidden"
+				document.getElementById("Box3").style.visibility = "hidden"		
+				
+				If RadioButton(0).Checked Then					
+					document.getElementById("Box1").style.visibility = "visible"
+				End If
+				If RadioButton(1).Checked Then
+					document.getElementById("Box3").style.visibility = "visible"
+				End If
+				If RadioButton(2).Checked Then
+					document.getElementById("Box2").style.visibility = "visible"
+				End If
+			End Sub
+
+			'********************************************************************************
+
+			Sub Query
+			
+				Dim timeOut 
+				
+				If RadioButton(0).Checked Then
+					window.document.body.Style.Cursor = "wait"
+					timeOut= window.setTimeout("QueryDisks", 2000)
+				End If
+				If RadioButton(1).Checked Then
+					window.document.body.Style.Cursor = "wait"
+					timeOut= window.setTimeout("QueryRange", 2000)
+				End If
+				If RadioButton(2).Checked Then
+					window.document.body.Style.Cursor = "wait"
+					timeOut= window.setTimeout("QueryFile", 2000)
+				End If
+			End Sub
+
+			'********************************************************************************
+
+			Sub AltCredentials
+			
+				If CheckBox1.checked = True Then
+					AdminName = InputBox("Enter administrator name" & vbCrLf & vbCrLf & "(ie. DOMAIN\Admin)", "Administrator Credentials")
+					If AdminName = "" Then 
+						CheckBox1.checked = False
+						Exit Sub
+					End If
+					AdminPass = InputBox("Enter administrator password", "Administrator Credentials")
+					If AdminPass = "" Then
+						Dim confirm : confirm = MsgBox("Does the admin account have a blank password?", 4, "Administrator Credentials")
+						If confirm = 6 Then
+							AdminPass = ""
+						Else
+							CheckBox1.checked = False
+							Exit Sub
+						End If	
+					End If
+				End If
+			End Sub
+		</script>
+	</head> <!--End Head-->
+
+<!--HTML CODE-->
+	<body>
+	
+		<div id="Info">
+			<a href="http://community.spiceworks.com/profile/show/IT4577">
+				<img src="http://static.spiceworks.com/images/users/0020/6560/mini_magick20120227-26837-1jt7gia_big.jpg?1330358166" alt="IT4577" width="60" height="60" align="right"/>
+			</a>
+			<span style="float:right;font-size:0.9em;font-style:italic;color:#888888;font-weight:bold;">Version 1.0&nbsp;Created by IT4577 </span>
+		</div> <!--End Information-->
+		
+		<div id="Selector">
+			<input type="radio" name="RadioButton" value="RadioButton1" onclick="RadioSelect()" checked>Query single computer<br/>
+			<input type="radio" name="RadioButton" value="RadioButton2" onclick="RadioSelect()" >Query computers from IP range<br/>
+			<input type="radio" name="RadioButton" value="RadioButton3" onclick="RadioSelect()" >Query computers from file<br/>
+		</div> <!--End Selector-->
+		
+		<div id="Header"style="margin-bottom: 5px;">
+		
+			<div id="Controls">
+				<ul>
+					<li><a onclick="Query()" href="#" class="button">Query</a></li>
+					<li><a onclick="ClearWindow()" href="#" class="button">Clear</a></li><br/>
+					<li><a onclick="ExportFile()" href="#" class="button">Export</a></li>
+					<li><a onclick="window.close()" href="#" class="button">Exit</a></li>
+				</ul>
+			</div> <!--End Controls-->
+			
+			<div id="Input">
+			
+				<div id="box1" class="box" style="margin-bottom: 5px;">
+					<label for="TextBox">Host:</label><br/>
+					<input type="text" id="TextBox" name="TextBox" size="20" value="localhost" onkeyup="Validate('TextBox')"/>
+				</div> <!--End Box1-->
+				
+				<div id="box2" class="box" style="margin-bottom: 5px; visibility: hidden"> 
+					<label for="FileBox">Select a file:</label><br/>
+					<input type="file" id="FileBox" name="FileBox" size="20"/>
+				</div> <!--End Box2-->
+				
+				<div id="box3" style="margin-bottom: 5px; width: 300px; visibility: hidden">
+					
+					<div style="width: 50%; float: left;">	
+						<label for="IPStart">Start of IP range:</label><br/>
+						<input type="text" id="IPStart" name="IPStart" size="20" onkeyup="Validate('IPStart')"/>
+					</div> <!--End Div-->
+					
+					<div style="width: 50%; float: right;">	
+						<label for="IPStop">End of IP range:</label><br/>
+						<input type="text" id="IPStop" name="IPStop" size="20" onkeyup="Validate('IPStop')"/>
+					</div> <!--End Div-->
+				</div> <!--End Box3-->
+				
+				<input type="checkbox" id="CheckBox1" name="CheckBox1" onclick="AltCredentials()"/>Run with different credentials
+			</div> <!--End Input-->
+		</div> <!--End Header-->
+
+		<div id="Data">
+			<span id="DataTable"></span>
+		</div> <!--End Data-->
+	</body> <!--End Body-->
+</html> <!--End HTML-->
