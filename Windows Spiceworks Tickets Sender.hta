@@ -1,0 +1,222 @@
+<HTA:APPLICATION
+    SCROLL="NO"
+/>
+<head>
+<title>Submit a Ticket</title>
+<style>
+BODY {
+      background-color : #FFFFFF;
+      font-family : Geneva, Arial, Helvetica, sans-serif;
+      color : #2F3A5D;
+      margin: 10px; 
+      }
+H3 {
+      font-family: Candara, 'Bitstream Vera Sans', 'DejaVu Sans', 'Bitsream Vera Sans', 'Trebuchet MS', Verdana, 'Verdana Ref', sans-serif;
+	  font-size: 18pt;
+      color : #2F3A5D;
+      }
+#quitButton {
+	position:absolute;
+	bottom:10;
+	left:80;
+}
+#sendButton {
+	position:absolute;
+	bottom:10;
+	right:80;
+}
+textarea#styled {
+width: 100%;
+height: 200px;
+border: 3px solid #A3C0F5;
+padding: 5px;
+font-family: "Segoe UI", Segoe, Tahoma, Geneva, sans-serif;
+font-size: 14pt;
+outline: none;
+overflow: auto;}
+input#textInput {
+border: 3px solid #A3C0F5;
+padding-top: 2px;
+padding-bottom: 2px;
+font-family: Tahoma, sans-serif;
+font-size: 14pt;}
+.submitButton {
+	-moz-box-shadow:inset 0px 1px 0px 0px #f29c93;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #f29c93;
+	box-shadow:inset 0px 1px 0px 0px #f29c93;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #fe1a00), color-stop(1, #ce0100) );
+	background:-moz-linear-gradient( center top, #fe1a00 5%, #ce0100 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fe1a00', endColorstr='#ce0100');
+	background-color:#fe1a00;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #d83526;
+	display:inline-block;
+	color:#ffffff;
+	font-family:Corbel, 'Lucida Grande', 'Lucida Sans Unicode', 'DejaVu Sans', 'Bitstream Vera Sans', 'Liberation Sans', Verdana, 'Verdana Ref', sans-serif;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:1px 1px 0px #b23e35;
+}.submitButton:hover {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ce0100), color-stop(1, #fe1a00) );
+	background:-moz-linear-gradient( center top, #ce0100 5%, #fe1a00 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ce0100', endColorstr='#fe1a00');
+	background-color:#ce0100;
+}.submitButton:active {
+	position:relative;
+	top:1px;
+}
+.cancelButton {
+	-moz-box-shadow:inset 0px 1px 0px 0px #bbdaf7;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #bbdaf7;
+	box-shadow:inset 0px 1px 0px 0px #bbdaf7;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #79bbff), color-stop(1, #378de5) );
+	background:-moz-linear-gradient( center top, #79bbff 5%, #378de5 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#79bbff', endColorstr='#378de5');
+	background-color:#79bbff;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #84bbf3;
+	display:inline-block;
+	color:#ffffff;
+	font-family:Corbel, 'Lucida Grande', 'Lucida Sans Unicode', 'DejaVu Sans', 'Bitstream Vera Sans', 'Liberation Sans', Verdana, 'Verdana Ref', sans-serif;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:1px 1px 0px #528ecc;
+}.cancelButton:hover {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #378de5), color-stop(1, #79bbff) );
+	background:-moz-linear-gradient( center top, #378de5 5%, #79bbff 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#378de5', endColorstr='#79bbff');
+	background-color:#378de5;
+}.cancelButton:active {
+	position:relative;
+	top:1px;
+}
+</style> 
+
+
+<script language="vbscript">
+
+Set objNetwork = CreateObject("WScript.Network")
+strUsername = objNetwork.UserName
+strDomainName = objNetwork.UserDomain
+strCompName = UCase(objNetwork.ComputerName)
+
+Set objLDAPUser = GetObject("LDAP://" & GetUserDN(strUsername,strDomainName))	'Get LDAP details of logged-on user to extract attributes...
+
+Function GetUserDN(BYVAL UN, BYVAL DN)		'...via this function to quickly get domain details of logged-on user from AD
+Set objTrans = CreateObject("NameTranslate")
+	objTrans.init 1, DN
+	objTrans.set 3, DN & "\" & UN
+	strUserDN = objTrans.Get(1)
+	GetUserDN = strUserDN
+End Function
+
+
+Sub Window_Onload
+	window.resizeTo 650,520
+	Call DisplayUserDetails()
+End Sub 
+
+
+Sub DisplayUserDetails()
+	currentUser.innerhtml = "Ticket sender: <b>" & objLDAPUser.DisplayName & "</b>"		'Show logged-on user's display name as a reminder in case they submit on behalf of someone else
+	computerName.innerhtml = "Computer Name: <b>" & UCase(strCompName) & "</b>"
+	showthebutton.innerhtml = "<a href=""#"" class=""submitButton"" onclick=""vbscript:SendMessage"">Submit Ticket</a>"
+			' ^ Also, in case of a delay, don't show the submit button until LDAP details are retrieved from AD
+End Sub
+
+
+Sub SendMessage()
+	If ticketSummary.value<>"" Then
+		If ticketDescriptionText.value<>"" Then		' Nested IF ensures both fields are entered	
+			strSender = objLDAPUser.DisplayName & " <" & objLDAPUser.mail & ">"		' Get user's email address from AD; format it to include display name
+			strSubjectLine = ticketSummary.value	'Grab text from ticket summary field to use as email subject line
+			
+			strTicketBody = Replace(ticketDescriptionText.value, chr(013) & chr(010), "<br>")	' Turn each newline into HTML <BR> tag
+			strTicketBody = strTicketBody & "<br><br>Computer name: " & strCompName
+			
+			Call SendTicketEmail(strSender, strSubjectLine, strTicketBody)
+		Else
+			Msgbox "No ticket description entered."
+		End If
+	Else
+		Msgbox "No ticket summary entered."
+	End If
+End Sub
+
+
+
+Sub SendTicketEmail(strSender, strSubjectLine, strTicketBody)
+	strTicketsMailbox = "IT Support <tickets@yourcompany.com>"		' incoming email address setup in Spiceworks to receive incoming email; see http://community.spiceworks.com/help/Configuring_The_IT_Help_Desk#Incoming
+	strSMTPServer = "mail.yourcompany.com"	' SMTP relay server name or IP address
+	strSMTPPort = 25
+
+	Set objEmail = CreateObject( "CDO.Message" )
+	With objEmail
+		.From     = strSender
+		.To       = strTicketsMailbox
+		.Subject  = strSubjectLine
+		.HTMLBody = strTicketBody
+	'	.TextBody = strTicketBody		'If you prefer plain text emails, uncomment this line (and comment the previous line), and change "<br>" in the SendMessage() subroutine to vbCrLf (without quotes)
+
+		With .Configuration.Fields
+			.Item( "http://schemas.microsoft.com/cdo/configuration/sendusing"      ) = 2
+			.Item( "http://schemas.microsoft.com/cdo/configuration/smtpserver"     ) = strSMTPServer
+			.Item( "http://schemas.microsoft.com/cdo/configuration/smtpserverport" ) = strSMTPPort
+			.Update
+		End With
+		.Send	' Send the message!
+	End With
+		
+	Set objEmail = Nothing		'Free up the mail object
+
+	MsgBox "Ticket sent successfully." & vbCrLf & vbCrLf & "Your request will be responded to shortly..."
+	Call ExitProgram()	'Close HTA window on send
+End Sub
+
+
+
+Sub ExitProgram
+	window.close()
+End Sub
+
+</script> 
+</head>
+
+<body>
+<center>
+	
+<H3>Submit an IT Support Ticket</H3>
+	
+<table border="0" cellpadding="5" cellspacing="5" width="95%">
+	<tr>
+	<td>Ticket Summary:</td> 
+	<td align="right"><input type="text" id="textInput" name="ticketSummary" size="48"></td>
+	</tr>
+	
+	<tr>
+		<td colspan="2">
+		Ticket Description:
+		<textarea name="ticketDescriptionText" id="styled"></textarea>
+		</td>
+	</tr>
+	
+	<tr>
+		<td colspan="2"><span id="currentUser"></span><br>
+		<span id="computerName"></span>
+		</td>
+	</tr>
+</table>
+
+<div id="quitButton"><a href="#" class="cancelButton" onclick="vbscript:ExitProgram">Cancel</a></div>
+<div id="sendButton"><span id="showthebutton"></span></div>
+ 
+</center>
+</body>
