@@ -1,0 +1,227 @@
+<script language="vbscript">
+on error resume next
+Window.ReSizeTo 0,0
+Window.MoveTo -100,-100
+</script>
+ 
+<HTML>
+<HEAD>
+<TITLE>Join Domain v1.0 Beta</title>
+<HTA:APPLICATION
+ApplicationName="JoinDomain"
+ID = "JoinDomain"
+SingleInstance="Yes"
+WindowsState="Normal"
+Scroll="No"
+Navigable="Yes"
+MaximizeButton="No"
+SysMenu="Yes"
+Caption="Yes"
+>
+<style type="text/css">
+.auto-style1 {  
+    color: #000000;
+    font-size: medium;
+    font-family: Calibri;
+}
+.auto-style2 {
+    color: #FFFFFF;
+    font-family: Calibri;
+    font-size: medium;
+}
+.auto-style3 {
+    color: #FFFFFF;
+    font-family: Calibri;
+    font-size: medium;
+}
+</style>
+</HEAD>
+ 
+<script language="vbscript"> 
+ 
+on error resume next
+Dim strComputerName
+ 
+Sub Window_OnLoad
+   self.focus()
+   mykey
+Set objWMISvc = GetObject( "winmgmts:\\.\root\cimv2" )
+Set colItems = objWMISvc.ExecQuery( "Select * from Win32_ComputerSystem", , 48 )
+For Each objItem in colItems
+    strComputerName = objItem.Name
+    'WScript.Echo "Computer Name: " & strComputerName
+Next
+ 
+DataArea.InnerHTML = strComputerName
+ 
+    w = 460
+    h = 410
+   Return = ResizeWindow(w, h)
+   Return = CenterWindow(w, h)
+   self.focus()
+End Sub
+   
+Function ResizeWindow(w, h)
+    width = w
+    height = h
+    window.resizeTo width, height
+       self.focus()
+End Function
+ 
+Function CenterWindow(w, h)
+    x = (screen.width-w)/2
+    y = (screen.height-h)/2
+    window.moveTo x, y
+End Function
+ 
+  
+'''''''''''''''''''''' ROUTINE
+Sub strJoinDomain
+On Error Resume Next
+strUserName = UserName.value
+strPassWord = PasswordArea.value
+ 
+Const JOIN_DOMAIN = 1
+Const ACCT_CREATE = 2
+ 
+Dim strUser, strDomain, strPW, iErrCount, sReturn, oCmp
+strUser = "DOMAIN\" & strUserName
+strDomain = "DOMAIN.com"
+strPw = strPassWord
+ 
+intAnswer = Msgbox("Join " & strComputerName & " to " & strDomain & "?", vbYesNo, "Join Domain")
+  If intAnswer = vbYes Then
+ 
+    Set WshShell = CreateObject("WScript.Shell")
+    iErrCount = 0
+ 
+    Set oWMI = GetObject("winmgmts:\\.\root\cimv2")
+    For Each oCmp in oWMI.InstancesOf("Win32_ComputerSystem")
+        while iErrCount < 4
+            sReturn = oCmp.JoinDomainOrWorkgroup(strDomain, strPW, strUser, NULL, JOIN_DOMAIN+ACCT_CREATE)
+                If sReturn <> 0 Then
+                    iErrCount = iErrCount +1
+                Else
+                    iErrCount = 5   
+                End If
+        wend
+    Next
+ 
+ 
+Set objComputer = GetObject("WinNT://" & strDomain & "/" & strComputerName & ",computer")
+If (Err.Number = 0) Then
+On Error GoTo 0
+    msgbox "   " & strComputerName & " has been joined to " & strDomain & "!",,"Success"
+Else
+    On Error GoTo 0
+    msgbox "   " & strComputerName & " did NOT join " & strDomain & "!",,"Failed"
+End If
+ 
+Self.Close()
+   
+Else
+    PopUp = Msgbox("Cancelled",9, "Join Domain")
+End If
+End Sub
+ 
+Sub CancelScript
+    Self.Close()
+End Sub
+ 
+</SCRIPT>
+ 
+<body style="background-color: #41B1F2">
+<CENTER>
+<br>
+<span class="auto-style3">Enter Credentials to Join Domain</span>
+<br>
+<br style="height: 149px">
+ 
+<div class="auto-style2">
+<table border="0" cellpadding="0" cellspacing="0" style="width: 382px; height: 142px;">
+ 
+<tr>
+<td height="15px" class="auto-style2" style="width: 148px" valign="bottom">
+<p align="left" class="auto-style2">Domain Username</p>
+</td>
+<td height="15px" class="auto-style2" style="width: 183px">
+<input type="text" name="UserName" size="20" class="auto-style1" align="top">
+</td>
+</tr>
+ 
+<tr>
+<td height="15px" class="auto-style2" style="width: 148px" valign="bottom">
+<p align="left" class="auto-style2">Domain Password</p>
+</td>
+<td height="15px" class="auto-style2" style="width: 183px">
+<input type="password" name="PasswordArea" size="20" class="auto-style1" align="top">
+</td>
+</tr>
+ 
+<tr>
+<td height="15px" class="auto-style2" style="width: 148px" valign="bottom">
+</td>
+<td height="15px" class="auto-style2" style="width: 183px">
+</td>
+</tr>
+ 
+<tr>
+<td height="15px" class="auto-style2" style="width: 148px" valign="bottom">
+<p align="left" class="auto-style2">Workstation </p>
+</td>
+<td height="15px" class="auto-style2" style="width: 183px">
+<span id = "DataArea"></span>
+</td>
+</tr>
+     
+     
+<tr>
+<td height="15px" class="auto-style2" style="width: 148px" valign="bottom">
+<p align="left" class="auto-style2">Domain</p>
+</td>
+ 
+<td height="15px" class="auto-style2" style="width: 183px">
+<span class="auto-style2">DOMAIN</span>
+</td>
+ 
+</tr>
+  
+</table>
+</dive>
+ 
+<BR>
+<HR color="#cccccc">
+<br>
+<Input id=runbutton class="auto-style1" type="button" value="Join Domain" name="run_button" onClick="strJoinDomain()" style="height: 35px">
+     
+<Input id=runbutton class="auto-style1" type="button" value="Cancel" name="cancel_button" onClick="CancelScript" style="height: 35px">
+ 
+ 
+ 
+<script type="text/javascript">
+var i = 0
+function FadeFunction() {
+if (i < 250) {
+i=i+1
+}
+var d = document.body.style
+d.filter = "alpha(Opacity="+i+")"
+d.opacity = i/250
+var num = document.all ? 5 : 250
+setTimeout("FadeFunction()",num)
+}
+</script>
+ 
+<script type="text/javascript">
+function mykey(){document.onkeydown=function(e){
+e=(window.event)? event:e;
+var k=e.keyCode;
+if(k==13) { 
+strJoinDomain()
+}
+}
+}
+</script>
+</CENTER>
+</BODY>
+</HTML>
