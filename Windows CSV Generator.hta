@@ -1,0 +1,106 @@
+<head>
+<title>CSV-Generator</title>
+<HTA:APPLICATION 
+     APPLICATIONNAME="CSV-Generator"
+     SCROLL="no"
+  BORDERSTYLE="static"
+     SINGLEINSTANCE="yes"
+     WINDOWSTATE="normal"
+  MAXIMIZEBUTTON="no"
+>
+</head>
+<link type="text/css" rel="stylesheet" href="webfx/css/tab.css" />
+<script type="text/javascript" src="webfx/js/tabpane.js"></script>
+<style>
+ .button {
+  background-color:#f5f5f5;
+  border:1px solid #dedede;
+  border-top:1px solid #eee;
+  border-left:1px solid #eee;
+ }
+</style>
+<script>
+    window.resizeTo(320, 240);
+ 
+ function onLoad() {
+  //Read the ini file and populate the setting text fields
+  document.getElementById("txtDatabaseName").value = "testdb";
+  document.getElementById("txtDatabaseUser").value = "root";
+  document.getElementById("txtDatabasePassword").value  = "password";
+  document.getElementById("txtCSVFile").value  = "testcsv.csv";
+  document.getElementById("txtOffer").value = "O";
+ };
+ 
+ function generateCSVFile() {
+  var oFS = new ActiveXObject("Scripting.FileSystemObject");
+     var adConnection, adRS;
+
+  adConnection = new ActiveXObject("ADODB.Connection");
+  adConnection.Provider = "MSDASQL";
+  adConnection.Mode = 1;
+  adConnection.CursorLocation = 3;
+  adConnection.Open("Driver={MySQL ODBC 3.51 Driver};" + 
+   "DATABASE=" + document.getElementById("txtDatabaseName").value + ";" + 
+   "SERVER=localhost;", 
+   document.getElementById("txtDatabaseUser").value, 
+   document.getElementById("txtDatabasePassword").value);
+                        
+  adRS = new ActiveXObject("ADODB.Recordset");
+  adRS.ActiveConnection = adConnection
+  adRS.CursorLocation = 3;
+  adRS.CursorType = 0;
+  adRS.LockType = 1;
+  adRS.Source = "Select * from article;";
+  adRS.Open;
+
+  
+  var csvFileName = document.getElementById("txtCSVFile").value;
+  var csvFile = oFS.OpenTextFile(csvFileName, 2, true);
+
+  while(!adRS.EOF) {
+   if (adRS.Fields.Item("identification").Value == document.getElementById("txtOffer").value) {
+    csvFile.WriteLine(adRS.Fields.Item("ID").Value + "," + adRS.Fields.Item("name").Value)
+   }
+   adRS.MoveNext;
+  }
+        csvFile.close();
+  adRS.close();
+  adConnection.close();
+ };
+</script>
+<body onload="onLoad();">
+ <div class="tab-pane" id="tabPane1">
+  <script type="text/javascript">tp1 = new WebFXTabPane( document.getElementById( "tabPane1" ) );</script>
+  <div class="tab-page" id="tabPage1">
+   <h2 class="tab">General</h2>
+   <script type="text/javascript">tp1.addTabPage( document.getElementById( "tabPage1" ) );</script>
+   <div style="font:11px MS Sans Serif;font-weight:bold;">Identifier in K1</div>
+    <table border="0" cellspacing="2" cellpadding="0">
+     <tr>
+      <td style="font:11px MS Sans Serif;" width="200">Offering</td><td width="60"><input type="text" id="txtOffer" size="2"></td>
+     </tr>
+    </table>
+    <br>
+    <input type="button" class="button" value="Generate CSV file" name="run_button"  onClick="generateCSVFile();">
+   </div>
+  <div class="tab-page" id="tabPage2">
+   <h2 class="tab">Settings</h2>
+   <script type="text/javascript">tp1.addTabPage( document.getElementById( "tabPage2" ) );</script>
+   <table border="0" cellspacing="2" cellpadding="0">
+    <tr>
+     <td style="font:11px MS Sans Serif;" width="150">Database</td><td width="120"><input type="text" id="txtDatabaseName"></td>
+    </tr>
+    <tr>
+     <td style="font:11px MS Sans Serif;" width="150">User</td><td width="120"><input type="text" id="txtDatabaseUser"></td>
+    </tr>
+    <tr>
+     <td style="font:11px MS Sans Serif;" width="150">Password</td><td width="120"><input type="text" id="txtDatabasePassword"></td>
+    </tr>
+    <tr>
+     <td style="font:11px MS Sans Serif;" width="150">CSV file</td><td width="120"><input type="text" id="txtCSVFile"></td>
+    </tr>
+   </table>
+   <input width="100%" type="button" class="button" value="Save settings" name="run_button"  onClick="saveSettings();"></td>
+  </div>
+ </div>
+</body>
