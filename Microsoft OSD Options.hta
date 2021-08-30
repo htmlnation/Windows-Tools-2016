@@ -1,0 +1,182 @@
+This HTA/VBscript is used to present a GUI during imaging of a corporate PC. It prompts for:
+	1) PC name (automatically populated if the PC already exists in SCCM)
+	2) Time zone (currently just PST, AZT, and MST)
+	3) If the PC will be used as a VM parent image or as a physical PC
+	4) One-off software
+	5) Additional browsers
+	6) Department selection
+	7) Management selection
+-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>OSD Computer Details</title>
+<HTA:APPLICATION ID="objNoTitleBar" APPLICATIONNAME="OSD Computer Details" SCROLL="auto" SINGLEINSTANCE="yes" CAPTION="no">
+
+<script language="VBScript">
+window.resizeTo 550,255
+window.moveTo 3,3
+
+' Hide the task sequence window
+'On Error Resume Next
+
+Dim oTaskSequence, oTSProgressUI
+Set oTaskSequence = CreateObject ("Microsoft.SMS.TSEnvironment")
+Set oTSProgressUI = CreateObject("Microsoft.SMS.TsProgressUI")
+oTSProgressUI.CloseProgressDialog
+
+Sub PreloadOptions
+	Dim sTSMachineName, bPromptName
+	sTSMachineName = ucase(oTaskSequence("_SMSTSMachineName"))
+
+	If left(sTSMachineName,6) = "MININT" Then
+		bPromptName = True
+	ElseIf sTSMachineName = "MINWINPC" Then
+		bPromptName = True
+	Else
+		bPromptName = False
+	End If
+
+	If bPromptName Then
+		ComputerName.value = ""
+	Else
+		ComputerName.value = sTSMachineName
+	End If
+End Sub
+
+Sub FinishClickTasks
+	'====================================
+	' Get/set computer name
+	'====================================
+	Dim sComputerName
+	sComputerName = UCase(ComputerName.Value)
+
+	' Check that a PC name was entered
+	Do
+		If sComputerName = "" Then
+			MsgBox "Error: Computer name cannot be left empty!", vbCritical, "Error"
+			sComputerName = InputBox ("Please enter a computer name to continue", "", , 30,30)
+		End If
+	Loop Until sComputerName <> ""
+
+	oTaskSequence ("OSDComputerName") = sComputerName
+
+	'====================================
+	' Get/set department configuration
+	'====================================
+	For Each oSelection in DepartmentChooser.Options
+		If oSelection.Selected Then
+			oTaskSequence ("OSDDepartment") = lcase(oSelection.InnerText)
+		End If
+	Next
+
+	'====================================
+	' Get/set managerial position
+	'====================================
+	For Each oSelection in ManagerRole.Options
+		If oSelection.Selected Then
+			oTaskSequence ("ManagerRole") = lcase(oSelection.InnerText)
+		End If
+	Next
+
+	'====================================
+	' OSConfig selection
+	'====================================
+	For Each oSelection in OSConfig
+		If oSelection.Checked Then
+			oTaskSequence ("OSDOSConfig") = lcase(oSelection.value)
+		End If
+	Next
+
+	'====================================
+	' Get/set Other Apps
+	'====================================
+	If SevenZip.checked Then oTaskSequence ("OSD7zip") = "true" End If
+	If Firefox.checked Then oTaskSequence ("OSDFirefox") = "true" End If
+	If NotepadPlusPlus.checked Then oTaskSequence ("OSDNotepadPlusPlus") = "true" End If
+	If GoogleChrome.checked Then oTaskSequence ("OSDGoogleChrome") = "true" End If
+	If PaintNet.checked Then oTaskSequence ("OSDPaintNet") = "true" End If
+	If Safari.checked Then oTaskSequence ("OSDAppleSafari") = "true" End If
+
+	'====================================
+	' Get/set Time Zone configuration
+	'====================================
+	For Each oSelection in TZChooser.Options
+		If oSelection.Selected Then
+			oTaskSequence ("OSDTimeZone") = oSelection.id
+		End If
+	Next
+
+	'====================================
+	' Terminate the HTA
+	'====================================
+	window.close
+End Sub
+
+</script>
+</head>
+
+<!------------------------------------------------>
+<!---------------- HTML goes here ---------------->
+<!------------------------------------------------>
+<body STYLE="font:12 pt arial; color:white; background-color:#006699" onload="PreloadOptions">
+<table cellpadding="3" border=1>
+	<tr valign=top>
+		<td>
+			<p>
+			<b>Computer Name</b><br>
+			<input type=text id="ComputerName" name=ComputerName size=22>
+			<p>
+			<b>Time Zone</b><br>
+			<select size="1" name="TZChooser">
+				<option value="00" id="Mountain Standard Time">MST (US Mountain)<BR>
+				<option value="01" id="Pacific Standard Time">PST (US West Coast)<BR>
+				<option value="02" id="US Mountain Standard Time">AZT (US Arizona)<br>
+				<!--<option value="03" id="Central Standard Time">CST (US Central)<BR>-->
+				<!--<option value="04" id="Eastern Standard Time">EST (US East Coast)<BR>-->
+			</select>
+			<p>
+			<b><u>OS Configuration</b></u><br>
+			<input type="radio" value="standalone" name="OSConfig" checked="True"> Standalone PC/VM<br>
+			<input type="radio" value="vmparent" name="OSConfig"> VM Parent
+		</td>
+		<td>
+			<b><u>Software Options</b></u><br>
+			<input type="checkbox" name="SevenZip"> 7-zip Utility<br>
+			<input type="checkbox" name="NotepadPlusPlus"> Notepad++<br>
+			<input type="checkbox" name="PaintNet"> Paint.Net<br>
+			<p>
+			<b><u>Internet Browsers</b></u><br>
+			<input type="checkbox" name="Safari"> Apple Safari<br>
+			<input type="checkbox" name="Firefox"> Firefox Browser<br>
+			<input type="checkbox" name="GoogleChrome"> Google Chrome<br>
+		</td>
+		<td>
+			<p>
+			<b><u>Department Selection</b></u><br>
+			<select size="1" name="DepartmentChooser">
+				<option value="00"> Standard PC</option>
+				<option value="01"> Accounting</option>
+				<option value="02"> Human Resources</option>
+				<option value="03"> Information Technology</option>
+			</select>
+			<p>
+			<b><u>Management Role</b></u><br>
+			<select size="1" name="ManagerRole">
+				<option value="00"> n/a</option>
+				<option value="01"> Supervisor</option>
+				<option value="02"> Manager</option>
+				<option value="03"> Director</option>
+				<option value="03"> VP</option>
+			</select>
+			<p>
+			<button accesskey=N type=submit id=buttonFinish onclick=FinishClickTasks>Finish</button>
+		</td>
+	</tr>
+</table>
+<!------------------------------------------------>
+<!------------------ End HTML -------------------->
+<!------------------------------------------------>
+
+</body>
+</html>
