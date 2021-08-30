@@ -1,0 +1,77 @@
+<HTML>
+
+<HEAD>
+
+<TITLE>Web Mail</TITLE>
+
+<SCRIPT LANGUAGE="VBScript">
+
+Sub cmdSendEmail_OnClick
+
+  Dim objMsg, objConfiguration, objConfigFields
+
+  Set objConfiguration = CreateObject("CDO.Configuration")
+
+  Set objConfigFields = objConfiguration.Fields
+
+
+
+  objConfigFields.Item("http://schemas.microsoft.com/cdo/" & _
+
+"configuration/sendusing") = 2
+
+  objConfigFields.Item("http://schemas.microsoft.com/cdo/" & _
+
+"configuration/smtpserverport") = 25
+
+  objConfigFields.Item("http://schemas.microsoft.com/cdo/" & _
+
+"configuration/smtpserver") = "email.westernsydney.edu.au"
+
+  objConfigFields.Update
+
+
+
+  Set objMsg = CreateObject("CDO.Message")
+
+  objMsg.Configuration = objConfiguration
+
+  objMsg.Subject = "subject of the message here"
+
+  objMsg.From = "j.yang@westernsydney.edu.au"
+
+  objMsg.To = Document.webmail.EmailAddress.Value
+
+  objMsg.TextBody = Document.webmail.Message.Value
+
+  objMsg.Send
+
+End Sub
+
+</SCRIPT>
+
+</HEAD>
+
+<BODY>
+
+<H1>Web Mail</H1>
+
+<FORM NAME="webmail">
+
+  <B>EmailAddress: </B>
+
+      <INPUT TYPE="Text" NAME="EmailAddress" SIZE=30>
+
+  <br> 
+
+<B>Message: </B><INPUT TYPE="Text" NAME="Message" SIZE=80>
+
+  <BR>
+
+  <INPUT TYPE="Button" NAME="cmdSendEmail" VALUE="Send">
+
+</FORM>
+
+</BODY>
+
+</HTML>
